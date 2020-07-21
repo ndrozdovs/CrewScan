@@ -1,0 +1,153 @@
+<BeginWindow>:
+    name: "begin"
+
+    canvas.before:
+        Color:
+            rgba: 0.65, 0.65, 0.65, 0.25
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+        cols:1
+
+        Label:
+            text: "Press"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.05, "top":0.7}
+            font_size: 50
+
+        Label:
+            text: "to Begin"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.12, "top":0.55}
+            font_size: 50
+
+        Image:
+            source: 'GreenCircle.png'
+            size_hint: 0.2, 0.2
+            pos_hint: {"x":0.53, "top":0.7}
+
+
+<InfoWindow>:
+    name: "info"
+
+    canvas.before:
+        Color:
+            rgba: 0.65, 0.65, 0.65, 0.25
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+        cols:1
+
+        Label:
+            text: "Please Answer"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":1}
+            font_size: 50
+
+        Label:
+            text: "the following"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.9}
+            font_size: 50
+
+        Label:
+            text: "using        for yes"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.8}
+            font_size: 50
+
+        Label:
+            text: "and        for no"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.7}
+            font_size: 50
+
+        Label:
+            text: "Continue"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.145, "top":0.353}
+            font_size: 50
+
+        Label:
+            text: "Cancel"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.117, "top":0.225}
+            font_size: 50
+
+        Image:
+            source: 'GreenCircle.png'
+            size: self.texture_size
+            size_hint: 0.1, 0.1
+            pos_hint: {"x":0.435, "top":0.75}
+
+        Image:
+            source: 'RedTriangle.png'
+            size: self.texture_size
+            size_hint: 0.1, 0.1
+            pos_hint: {"x":0.425, "top":0.65}
+
+        Image:
+            source: 'GreenCircle.png'
+            size: self.texture_size
+            size_hint: 0.1, 0.1
+            pos_hint: {"x":0.32, "top":0.3}
+
+        Image:
+            source: 'RedTriangle.png'
+            size: self.texture_size
+            size_hint: 0.1, 0.1
+            pos_hint: {"x":0.32, "top":0.18}
+
+
+<TravelWindow>:
+    name: "travel"
+
+    canvas.before:
+        Color:
+            rgba: 0.65, 0.65, 0.65, 0.25
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+        cols:1
+
+        Label:
+            text: "Have you traveled"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":1}
+            font_size: 50
+
+        Label:
+            text: "outside BC?"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.9}
+            font_size: 50
+
+        Label:
+            text: "Yes"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.125, "top":0.673}
+            font_size: 50
+
+        Label:
+            text: "No"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.125, "top":0.545}
+            font_size: 50
+
+        Image:
+            source: 'GreenCircle.png'
+            size: self.texture_size
+            size_hint: 0.1, 0.1
+            pos_hint: {"x":0.37, "top":0.62}
+
+        Image:
+            source: 'RedTriangle.png'
+            size: self.texture_size
+            size_hint: 0.1, 0.1
+            pos_hint: {"x":0.37, "top":0.5}
