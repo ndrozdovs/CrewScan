@@ -10,6 +10,8 @@ import board
 import busio
 import adafruit_ads1x15.ads1115 as ADS
 from adafruit_ads1x15.analog_in import AnalogIn
+import time
+import RPi.GPIO as GPIO
 
 
 class BeginWindow(Screen):
@@ -33,11 +35,40 @@ def invalidAnswer():
     return pop
 
 
+def ReadDistance(pin):
+    GPIO.setup(pin, GPIO.OUT)
+    GPIO.output(pin, 0)
+
+    time.sleep(0.000002)
+
+    #send trigger signal
+    GPIO.output(pin, 1)
+
+    time.sleep(0.000005)
+
+    GPIO.output(pin, 0)
+
+    GPIO.setup(pin, GPIO.IN)
+
+    while GPIO.input(pin)==0:
+        starttime=time.time()
+
+    while GPIO.input(pin)==1:
+        endtime=time.time()
+
+    duration=endtime-starttime
+    # Distance is defined as time/2 (there and back) * speed of sound 34000 cm/s 
+    distance=duration*34000/2
+    return distance
+
+
 i2c = busio.I2C(board.SCL, board.SDA)
 # Create ADC object
 ads = ADS.ADS1115(i2c)
 # Create analog input channel
 chan = AnalogIn(ads, ADS.P0)
+
+GPIO.setmode(GPIO.BCM)
 
 pop_active = 0
 kv = Builder.load_file("my.kv")
@@ -61,7 +92,8 @@ class MyApp(App):
 
                 elif self.root.current is 'info':
                     temp = 2705.06 + ((-7670.457 - 2705.061) / (1 + (chan.voltage / (3.135016*(10**-8)))**0.0595245))
-                    print(round(temp,3))
+                    distance = ReadDistance(17)
+                    print ("Distance to object:",distance*.3937," inches    temperature:",round(temp,3), " degrees")
                     if keyboard.is_pressed('d'):
                         while (keyboard.is_pressed('d')):
                             pass

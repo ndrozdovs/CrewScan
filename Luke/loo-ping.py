@@ -3,7 +3,7 @@ import time
 import RPi.GPIO as GPIO
 
 # Use board based pin numbering
-GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BCM)
 
 def ReadDistance(pin):
    GPIO.setup(pin, GPIO.OUT)
@@ -32,7 +32,7 @@ def ReadDistance(pin):
    return distance
 
 while True:
-   distance = ReadDistance(11)
-   print "Distance to object is ",distance," cm or ",distance*.3937, " inches"
+   distance = ReadDistance(17)
+   print ("Distance to object is ",distance," cm or ",distance*.3937, " inches")
    time.sleep(.5)
 
