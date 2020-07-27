@@ -6,9 +6,10 @@ from kivy.uix.label import Label
 from kivy.clock import Clock
 import keyboard
 from kivy.core.window import Window
-
-
-pop_active = 0
+import board
+import busio
+import adafruit_ads1x15.ads1115 as ADS
+from adafruit_ads1x15.analog_in import AnalogIn
 
 
 class BeginWindow(Screen):
@@ -32,6 +33,13 @@ def invalidAnswer():
     return pop
 
 
+i2c = busio.I2C(board.SCL, board.SDA)
+# Create ADC object
+ads = ADS.ADS1115(i2c)
+# Create analog input channel
+chan = AnalogIn(ads, ADS.P0)
+
+pop_active = 0
 kv = Builder.load_file("my.kv")
 
 sm = WindowManager()
@@ -52,6 +60,8 @@ class MyApp(App):
                         self.root.transition.direction = "left"
 
                 elif self.root.current is 'info':
+                    temp = 2705.06 + ((-7670.457 - 2705.061) / (1 + (chan.voltage / (3.135016*(10**-8)))**0.0595245))
+                    print(round(temp,3))
                     if keyboard.is_pressed('d'):
                         while (keyboard.is_pressed('d')):
                             pass
