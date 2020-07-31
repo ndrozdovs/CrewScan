@@ -69,13 +69,13 @@
         Label:
             text: "Continue"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.145, "top":0.353}
+            pos_hint: {"x":0.145, "top":0.3}
             font_size: 50
 
         Label:
             text: "Cancel"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.117, "top":0.225}
+            pos_hint: {"x":0.117, "top":0.172}
             font_size: 50
 
         Image:
@@ -94,13 +94,75 @@
             source: 'GreenCircle.png'
             size: self.texture_size
             size_hint: 0.1, 0.1
-            pos_hint: {"x":0.32, "top":0.3}
+            pos_hint: {"x":0.32, "top":0.247}
 
         Image:
             source: 'RedTriangle.png'
             size: self.texture_size
             size_hint: 0.1, 0.1
-            pos_hint: {"x":0.32, "top":0.18}
+            pos_hint: {"x":0.32, "top":0.127}
+
+
+<CoughWindow>:
+    name: "cough"
+
+    canvas.before:
+        Color:
+            rgba: 0.65, 0.65, 0.65, 0.25
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+        cols:1
+
+        Label:
+            text: "Do you have any of the"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":1}
+            font_size: 50
+
+        Label:
+            text: "following symptoms?"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.9}
+            font_size: 50
+
+        Label:
+            text: " > New or worsening cough"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.7}
+            font_size: 50
+
+        Label:
+            text: " > Fever"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.6}
+            font_size: 50
+
+        Label:
+            text: "Yes"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.125, "top":0.3}
+            font_size: 50
+
+        Label:
+            text: "No"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.125, "top":0.172}
+            font_size: 50
+
+        Image:
+            source: 'GreenCircle.png'
+            size: self.texture_size
+            size_hint: 0.1, 0.1
+            pos_hint: {"x":0.37, "top":0.247}
+
+        Image:
+            source: 'RedTriangle.png'
+            size: self.texture_size
+            size_hint: 0.1, 0.1
+            pos_hint: {"x":0.37, "top":0.127}
 
 
 <TravelWindow>:
@@ -117,37 +179,243 @@
         cols:1
 
         Label:
-            text: "Have you traveled"
+            text: "Have you traveled outside of Canada"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":1}
             font_size: 50
 
         Label:
-            text: "outside BC?"
+            text: "or had close contact with anyone"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.9}
+            font_size: 50
+            
+        Label:
+            text: "that has travelled outside of Canada"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.8}
+            font_size: 50
+            
+        Label:
+            text: "in the past 14 days?"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.7}
             font_size: 50
 
         Label:
             text: "Yes"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.125, "top":0.673}
+            pos_hint: {"x":0.125, "top":0.3}
             font_size: 50
 
         Label:
             text: "No"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.125, "top":0.545}
+            pos_hint: {"x":0.125, "top":0.172}
             font_size: 50
 
         Image:
             source: 'GreenCircle.png'
             size: self.texture_size
             size_hint: 0.1, 0.1
-            pos_hint: {"x":0.37, "top":0.62}
+            pos_hint: {"x":0.37, "top":0.247}
 
         Image:
             source: 'RedTriangle.png'
             size: self.texture_size
             size_hint: 0.1, 0.1
-            pos_hint: {"x":0.37, "top":0.5}
+            pos_hint: {"x":0.37, "top":0.127}
+            
+
+<FeverWindow>:
+    name: "fever"
+
+    canvas.before:
+        Color:
+            rgba: 0.65, 0.65, 0.65, 0.25
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+        cols:1
+
+        Label:
+            text: "Do you have a fever?"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":1}
+            font_size: 50
+
+        Label:
+            text: "Yes"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.125, "top":0.3}
+            font_size: 50
+
+        Label:
+            text: "No"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.125, "top":0.172}
+            font_size: 50
+
+        Image:
+            source: 'GreenCircle.png'
+            size: self.texture_size
+            size_hint: 0.1, 0.1
+            pos_hint: {"x":0.37, "top":0.247}
+
+        Image:
+            source: 'RedTriangle.png'
+            size: self.texture_size
+            size_hint: 0.1, 0.1
+            pos_hint: {"x":0.37, "top":0.127}
+            
+            
+<ContactWindow>:
+    name: "contact"
+
+    canvas.before:
+        Color:
+            rgba: 0.65, 0.65, 0.65, 0.25
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+        cols:1
+
+        Label:
+            text: "Have you had close contact with"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":1}
+            font_size: 50
+
+        Label:
+            text: "anyone with respiratory ilness or"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.9}
+            font_size: 50
+
+        Label:
+            text: "a confirmed or probable case of"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.8}
+            font_size: 50
+
+        Label:
+            text: "COVID-19?"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.7}
+            font_size: 50
+
+        Label:
+            text: "Yes"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.125, "top":0.3}
+            font_size: 50
+
+        Label:
+            text: "No"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.125, "top":0.172}
+            font_size: 50
+
+        Image:
+            source: 'GreenCircle.png'
+            size: self.texture_size
+            size_hint: 0.1, 0.1
+            pos_hint: {"x":0.37, "top":0.247}
+
+        Image:
+            source: 'RedTriangle.png'
+            size: self.texture_size
+            size_hint: 0.1, 0.1
+            pos_hint: {"x":0.37, "top":0.127}
+            
+            
+<EquipmentWindow>:
+    name: "equipment"
+
+    canvas.before:
+        Color:
+            rgba: 0.65, 0.65, 0.65, 0.25
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+        cols:1
+
+        Label:
+            text: "Did you wear the required and/or"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":1}
+            font_size: 50
+
+        Label:
+            text: "recommended PPE according to the"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.9}
+            font_size: 50
+
+        Label:
+            text: "type of duties you were performing"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.8}
+            font_size: 50
+            
+        Label:
+            text: "when you had close with a suspected"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.5}
+            font_size: 50
+            
+        Label:
+            text: "or confirmed case of COVID-19?"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.4}
+            font_size: 50
+
+        Label:
+            text: "Yes"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.125, "top":0.3}
+            font_size: 50
+
+        Label:
+            text: "No"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.125, "top":0.172}
+            font_size: 50
+
+        Image:
+            source: 'GreenCircle.png'
+            size: self.texture_size
+            size_hint: 0.1, 0.1
+            pos_hint: {"x":0.37, "top":0.247}
+
+        Image:
+            source: 'RedTriangle.png'
+            size: self.texture_size
+            size_hint: 0.1, 0.1
+            pos_hint: {"x":0.37, "top":0.127}
+            
+            
+<TemperatureWindow>:
+    name: "temperature"
+
+    canvas.before:
+        Color:
+            rgba: 0.65, 0.65, 0.65, 0.25
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+        cols:1
+
+        Label:
+            text: "Measuring your temperature..."
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":1}
+            font_size: 50
