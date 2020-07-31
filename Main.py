@@ -168,21 +168,19 @@ class MyApp(App):
                     if keyboard.is_pressed('d'):
                         while (keyboard.is_pressed('d')):
                             pass
-                        self.root.current = 'begin'
-                        self.root.transition.direction = "right"
-                        self.pop = invalidAnswer()
-                        pop_active = 1
+                        self.root.current = 'equipment'
+                        self.root.transition.direction = "left"
                     elif keyboard.is_pressed('a'):
                         while (keyboard.is_pressed('a')):
                             pass
-                        self.root.current = 'equipment'
+                        self.root.current = 'temperature'
                         self.root.transition.direction = "left"
                         
                 elif self.root.current is 'equipment':
                     if keyboard.is_pressed('d'):
                         while (keyboard.is_pressed('d')):
                             pass
-                        self.root.current = 'temp'
+                        self.root.current = 'temperature'
                         self.root.transition.direction = "left"
                     elif keyboard.is_pressed('a'):
                         while (keyboard.is_pressed('a')):
