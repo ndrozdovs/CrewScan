@@ -20,6 +20,9 @@ class BeginWindow(Screen):
 class InfoWindow(Screen):
     pass
 
+class CoughWindow(Screen):
+    pass
+
 class TravelWindow(Screen):
     pass
 
@@ -74,7 +77,7 @@ pop_active = 0
 kv = Builder.load_file("my.kv")
 
 sm = WindowManager()
-screens = [BeginWindow(name="begin"), InfoWindow(name="info"), TravelWindow(name="travel")]
+screens = [BeginWindow(name="begin"), InfoWindow(name="info"), CoughWindow(namo="cough"), TravelWindow(name="travel")]
 for screen in screens:
     sm.add_widget(screen)
 
@@ -91,9 +94,9 @@ class MyApp(App):
                         self.root.transition.direction = "left"
 
                 elif self.root.current is 'info':
-                    temp = 2705.06 + ((-7670.457 - 2705.061) / (1 + (chan.voltage / (3.135016*(10**-8)))**0.0595245))
-                    distance = ReadDistance(17)
-                    print ("Distance to object:",distance*.3937," inches    temperature:",round(temp,3), " degrees")
+                    #temp = 2705.06 + ((-7670.457 - 2705.061) / (1 + (chan.voltage / (3.135016*(10**-8)))**0.0595245))
+                    #distance = ReadDistance(17)
+                    #print ("Distance to object:",distance*.3937," inches    temperature:",round(temp,3), " degrees")
                     if keyboard.is_pressed('d'):
                         while (keyboard.is_pressed('d')):
                             pass
@@ -105,7 +108,7 @@ class MyApp(App):
                         self.root.current = 'begin'
                         self.root.transition.direction = "right"
 
-                elif self.root.current is 'travel':
+                 elif self.root.current is 'cough':
                     if keyboard.is_pressed('d'):
                         while (keyboard.is_pressed('d')):
                             pass
@@ -116,8 +119,23 @@ class MyApp(App):
                     elif keyboard.is_pressed('a'):
                         while (keyboard.is_pressed('a')):
                             pass
-                        self.root.current = 'info'
+                        self.root.current = 'travel'
+                        self.root.transition.direction = "left"
+
+                 elif self.root.current is 'travel':
+                    if keyboard.is_pressed('d'):
+                        while (keyboard.is_pressed('d')):
+                            pass
+                        self.root.current = 'begin'
                         self.root.transition.direction = "right"
+                        self.pop = invalidAnswer()
+                        pop_active = 1
+                    elif keyboard.is_pressed('a'):
+                        while (keyboard.is_pressed('a')):
+                            pass
+                        self.root.current = 'travel'
+                        self.root.transition.direction = "right"
+
             elif pop_active == 1:
                 if keyboard.is_pressed('d'):
                     while (keyboard.is_pressed('d')):
