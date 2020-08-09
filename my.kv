@@ -31,7 +31,7 @@
 
 <InfoWindow>:
     name: "info"
-
+    
     canvas.before:
         Color:
             rgba: 0.65, 0.65, 0.65, 0.25
@@ -64,6 +64,12 @@
             text: "and        for no"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.7}
+            font_size: 50
+            
+        Label:
+            text: root.string_dummy
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.6}
             font_size: 50
 
         Label:
@@ -400,6 +406,26 @@
             size_hint: 0.1, 0.1
             pos_hint: {"x":0.37, "top":0.127}
             
+
+<DistanceWindow>:
+    name: "distance"
+
+    canvas.before:
+        Color:
+            rgba: 0.65, 0.65, 0.65, 0.25
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+        cols:1
+
+        Label:
+            text: "Please get within 3 inches of the sensor"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":1}
+            font_size: 50
+
             
 <TemperatureWindow>:
     name: "temperature"
@@ -416,6 +442,53 @@
 
         Label:
             text: "Measuring your temperature..."
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":1}
+            font_size: 50
+            
+
+<GoodTempWindow>:
+    name: "good_temp"
+
+    canvas.before:
+        Color:
+            rgba: 0.65, 0.65, 0.65, 0.25
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+        cols:1
+
+        Label:
+            text: "Temperature is good"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":1}
+            font_size: 50
+            
+        Label:
+            text: root.temperature_display
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.8}
+            font_size: 50
+            
+            
+            
+<BadTempWindow>:
+    name: "bad_temp"
+
+    canvas.before:
+        Color:
+            rgba: 0.65, 0.65, 0.65, 0.25
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+        cols:1
+
+        Label:
+            text: "Temperature too high"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":1}
             font_size: 50
