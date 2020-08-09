@@ -15,119 +15,172 @@ import time
 import RPi.GPIO as GPIO
 from kivy.properties import StringProperty, ObjectProperty
 from kivy.event import EventDispatcher
+from functools import partial
+from kivy.uix.progressbar import ProgressBar
+from kivy.uix.button import Button 
+from kivy.uix.popup import Popup
+from kivy.uix.widget import Widget 
 
 
 TEMPERATURE = 0
+DISTANCE = 0
+DIST_COUNTER = 0
+TEMP_COUNTER = 0
+PROGRESS_BAR = "["
 COUNTER = 0
 
 
+# Window to start the screening
 class BeginWindow(Screen):
-    pass
-    
-class InfoWindow(Screen):
-    string_dummy = StringProperty("")
-    
+    def on_pre_enter(self):
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'info', 'begin'), 1/20)
+        self.event1 = Clock.schedule_interval(self.bullshit, 1/10)
+        
+    def on_pre_leave(self):
+        self.event.cancel()
+        
     def bullshit(self, dt):
         global COUNTER
-        self.string_dummy = str(COUNTER)
+        self.ids.progress.value = COUNTER
         COUNTER = COUNTER + 1
-    
-    def on_enter(self):
-        Clock.schedule_interval(self.bullshit, 1)
-        print("HERE")
-        #while counter < 500:
-            #self.string_dummy = str(counter)
-            #counter = counter + 1
-        #self.string_dummy = str(TEMPERATURE)
-        #time.sleep(2)
-        #self.string_dummy = "HI"
+ 
+# Window to show how to answer to prompts
+class InfoWindow(Screen):
+    def on_pre_enter(self):
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'cough', 'begin'), 1/20)
+        
+    def on_pre_leave(self):
+        self.event.cancel()
 
+# Window to check for new cough or fever symptoms
 class CoughWindow(Screen):
-    pass
+    def on_pre_enter(self):
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'travel'), 1/20)
+        
+    def on_pre_leave(self):
+        self.event.cancel()
 
+# Window to check if person traveled outside of Canada
 class TravelWindow(Screen):
-    pass
-    
-class FeverWindow(Screen):
-    pass
-    
-class ContactWindow(Screen):
-    pass
-    
-class EquipmentWindow(Screen):
-    pass
-    
-class DistanceWindow(Screen):
-    def on_enter(self):
-        Clock.schedule_once(self.measureDist)
+    def on_pre_enter(self):
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'fever'), 1/20)
+        
+    def on_pre_leave(self):
+        self.event.cancel()
 
-    def measureDist(self, dt):
-        dist_counter = 0
+# Window to check if person has a fever    
+class FeverWindow(Screen):
+    def on_pre_enter(self):
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'contact'), 1/20)
+        
+    def on_pre_leave(self):
+        self.event.cancel()
+ 
+# Window to check if person had to contact with an individual with Covid or Covid like symptoms
+class ContactWindow(Screen):
+    def on_pre_enter(self):
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'equipment', 'distance'), 1/20)
+        
+    def on_pre_leave(self):
+        self.event.cancel()
+
+# Window to check if person was wearing protective equipment if they were exsposed to an individual with Covid
+class EquipmentWindow(Screen):        
+    def on_pre_enter(self):
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'distance', 'begin'), 1/20)
+        
+    def on_pre_leave(self):
+        self.event.cancel()
+
+# Window to prompt the person to get within temperature measuring distance
+class DistanceWindow(Screen):
+    def on_pre_enter(self):
+        self.event = Clock.schedule_interval(self.measure_dist, 1/10)
+        
+    def on_pre_leave(self):
+        self.event.cancel()
+
+    def measure_dist(self, dt):
+        global DIST_COUNTER
+        global PROGRESS_BAR
         
         print("MEASURING")
         
-        while dist_counter <= 2:
-            if ReadDistance(17) < 100:
-                dist_counter = dist_counter + 1
-            else:
-                dist_counter = 0
-            time.sleep(0.1)
-        
-        print("Distance is good")
-        self.manager.current = "temperature"
-        
-
-class TemperatureWindow(Screen):
-    def on_enter(self):
-        Clock.schedule_once(self.measureTemp) 
-        
-    def measureTemp(self, dt):
-        global TEMPERATURE
-        temp_counter = 0
-        distance = 0
-        
-        while temp_counter <= 15:
-            if ReadDistance(17) < 100:
-                test_temperature = 2705.06 + ((-7670.457 - 2705.061) / (1 + (chan.voltage / (3.135016*(10**-8)))**0.0595245))
-                if test_temperature > 20 and test_temperature < 45:
-                    TEMPERATURE = TEMPERATURE + test_temperature
-                    temp_counter = temp_counter + 1
-                    distance = distance + ReadDistance(17)
-            else:
-                print("RESTARTING")
-                TEMPERATURE = 0
-                self.manager.current = "distance"
-            time.sleep(0.02)
-        
-        print("Average temperature is:", (TEMPERATURE / temp_counter), " Voltage: ", round(chan.voltage, 5), " Distance is:", (distance/temp_counter))
-        
-        if (TEMPERATURE / temp_counter) < 40:
-            self.manager.current = "good_temp"
+        if ReadDistance(17) < 10:
+            DIST_COUNTER = DIST_COUNTER + 1
+            self.ids.progress.value = DIST_COUNTER
+            print(DIST_COUNTER)
+            if DIST_COUNTER is 10:
+                print("Distance is good")
+                DIST_COUNTER = 0
+                self.manager.current = "temperature"
         else:
-            self.manager.current = "bad_temp"
-            
+            DIST_COUNTER = 0
+
+# Window to measure persons temperature
+class TemperatureWindow(Screen):
+    def on_pre_enter(self):
+        self.event = Clock.schedule_interval(self.measure_temp, 1/50)
+        
+    def on_pre_leave(self):
+        self.event.cancel()
+        
+    def measure_temp(self, dt):
+        global TEMPERATURE
+        global TEMP_COUNTER
+        global DISTANCE
+
+        if ReadDistance(17) < 10:
+            test_temperature = 2705.06 + ((-7670.457 - 2705.061) / (1 + (chan.voltage / (3.135016*(10**-8)))**0.0595245))
+            if test_temperature > 20 and test_temperature < 45:
+                TEMPERATURE = TEMPERATURE + test_temperature
+                TEMP_COUNTER = TEMP_COUNTER + 1
+                DISTANCE = DISTANCE + ReadDistance(17)
+                if TEMP_COUNTER is 150:
+                    print("Average temperature is:", (TEMPERATURE / TEMP_COUNTER), " Voltage: ", round(chan.voltage, 5), " Distance is:", (DISTANCE/TEMP_COUNTER))
+                    if (TEMPERATURE / TEMP_COUNTER) < 40:
+                        self.manager.current = "good_temp"
+                    else:
+                        self.manager.current = "bad_temp"
+                    TEMP_COUNTER = 0
+                    DISTANCE = 0
+                    
+        else:
+            print("RESTARTING")
+            TEMPERATURE = 0
+            TEMP_COUNTER = 0
+            DISTANCE = 0
+            self.manager.current = "distance"
+        
+# Window if the persons temperature was good
 class GoodTempWindow(Screen):
     temperature_display = StringProperty("")
         
     def on_enter(self):
         global TEMPERATURE
         self.temperature_display = TEMPERATURE
-    
+
+# Window if the persons temperature was not good    
 class BadTempWindow(Screen):
     pass
 
+# Window Manager
 class WindowManager(ScreenManager):
     pass
 
 
-def invalidAnswer():
-    pop = Popup(title='Warning',
-                content=Label(text='Warning: Invalid answer'),
-                size_hint=(None, None), size=(400, 400))
-    pop.open()
-    return pop
+def answer_input(instance, right, left, dt):
+    if keyboard.is_pressed('d'):
+        while (keyboard.is_pressed('d')):
+            pass
+        instance.manager.current = right
+    elif keyboard.is_pressed('a'):
+        while (keyboard.is_pressed('a')):
+            pass
+        instance.manager.current = left
+    
 
-
+# Measure distance from sensor and return the value
 def ReadDistance(pin):
     GPIO.setup(pin, GPIO.OUT)
     GPIO.output(pin, 0)
@@ -155,15 +208,14 @@ def ReadDistance(pin):
     return distance
 
 
-#i2c = busio.I2C(board.SCL, board.SDA)
+i2c = busio.I2C(board.SCL, board.SDA)
 # Create ADC object
-#ads = ADS.ADS1115(i2c)
+ads = ADS.ADS1115(i2c)
 # Create analog input channel
-#chan = AnalogIn(ads, ADS.P0)
+chan = AnalogIn(ads, ADS.P0)
 
 GPIO.setmode(GPIO.BCM)
 
-pop_active = 0
 kv = Builder.load_file("my.kv")
 
 sm = WindowManager(transition=NoTransition())
@@ -174,120 +226,9 @@ screens = [BeginWindow(name="begin"), InfoWindow(name="info"), CoughWindow(name=
 for screen in screens:
     sm.add_widget(screen)
 
+
 class MyApp(App):
     def build(self):
-        def answer_input(dt):
-            global pop_active
-            if pop_active == 0:
-                if self.root.current is 'begin':
-                    if keyboard.is_pressed('d'):
-                        while (keyboard.is_pressed('d')):
-                            pass
-                        self.root.current = 'info'
-                        self.root.transition.direction = "left"
-
-                elif self.root.current is 'info':
-                    #App.get_running_app().root.string_dummy = "NO"
-                    if keyboard.is_pressed('d'):
-                        while (keyboard.is_pressed('d')):
-                            pass
-                        self.root.current = 'cough'
-                        self.root.transition.direction = "left"
-                    elif keyboard.is_pressed('a'):
-                        while (keyboard.is_pressed('a')):
-                            pass
-                        self.root.current = 'begin'
-                        self.root.transition.direction = "right"
-
-                elif self.root.current is 'cough':
-                    if keyboard.is_pressed('d'):
-                        while (keyboard.is_pressed('d')):
-                            pass
-                        self.root.current = 'begin'
-                        self.root.transition.direction = "right"
-                        self.pop = invalidAnswer()
-                        pop_active = 1
-                    elif keyboard.is_pressed('a'):
-                        while (keyboard.is_pressed('a')):
-                            pass
-                        self.root.current = 'travel'
-                        self.root.transition.direction = "left"
-
-                elif self.root.current is 'travel':
-                    if keyboard.is_pressed('d'):
-                        while (keyboard.is_pressed('d')):
-                            pass
-                        self.root.current = 'begin'
-                        self.root.transition.direction = "right"
-                        self.pop = invalidAnswer()
-                        pop_active = 1
-                    elif keyboard.is_pressed('a'):
-                        while (keyboard.is_pressed('a')):
-                            pass
-                        self.root.current = 'fever'
-                        self.root.transition.direction = "left"
-                
-                elif self.root.current is 'fever':
-                    if keyboard.is_pressed('d'):
-                        while (keyboard.is_pressed('d')):
-                            pass
-                        self.root.current = 'begin'
-                        self.root.transition.direction = "right"
-                        self.pop = invalidAnswer()
-                        pop_active = 1
-                    elif keyboard.is_pressed('a'):
-                        while (keyboard.is_pressed('a')):
-                            pass
-                        self.root.current = 'contact'
-                        self.root.transition.direction = "left"
-                        
-                elif self.root.current is 'contact':
-                    if keyboard.is_pressed('d'):
-                        while (keyboard.is_pressed('d')):
-                            pass
-                        self.root.current = 'equipment'
-                        self.root.transition.direction = "left"
-                    elif keyboard.is_pressed('a'):
-                        while (keyboard.is_pressed('a')):
-                            pass
-                        self.root.current = 'distance'
-                        self.root.transition.direction = "left"
-                        
-                elif self.root.current is 'equipment':
-                    if keyboard.is_pressed('d'):
-                        while (keyboard.is_pressed('d')):
-                            pass
-                        self.root.current = 'distance'
-                        self.root.transition.direction = "left"
-                    elif keyboard.is_pressed('a'):
-                        while (keyboard.is_pressed('a')):
-                            pass
-                        self.root.current = 'begin'
-                        self.root.transition.direction = "right"
-                        self.pop = invalidAnswer()
-                        pop_active = 1
-                        
-                elif self.root.current is 'temperature':
-                    if keyboard.is_pressed('d'):
-                        while (keyboard.is_pressed('d')):
-                            pass
-                        self.root.current = 'begin'
-                        self.root.transition.direction = "right"
-                    elif keyboard.is_pressed('a'):
-                        while (keyboard.is_pressed('a')):
-                            pass
-                        self.root.current = 'distance'
-                        self.root.transition.direction = "right"
-
-            elif pop_active == 1:
-                if keyboard.is_pressed('d'):
-                    while (keyboard.is_pressed('d')):
-                        pass
-                    self.pop.dismiss()
-                    pop_active = 0
-
-        Clock.schedule_interval(answer_input, 1/20)
-
         return sm
 
 

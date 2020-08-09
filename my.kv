@@ -22,6 +22,11 @@
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.12, "top":0.55}
             font_size: 50
+            
+        ProgressBar:
+            id: progress
+            size_hint: (0.8, 0.8)
+            pos_hint: {"x":0.12, "top":0.35}
 
         Image:
             source: 'GreenCircle.png'
@@ -64,12 +69,6 @@
             text: "and        for no"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.7}
-            font_size: 50
-            
-        Label:
-            text: root.string_dummy
-            size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.6}
             font_size: 50
 
         Label:
@@ -425,6 +424,11 @@
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":1}
             font_size: 50
+            
+        ProgressBar:
+            id: progress
+            size_hint: (0.8, 0.2)
+            pos_hint: {"x":0.105, "top":0.5}
 
             
 <TemperatureWindow>:
