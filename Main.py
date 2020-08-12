@@ -3,31 +3,30 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
-from kivy.clock import Clock
 from kivy.uix.textinput import TextInput
-import keyboard
+from kivy.uix.progressbar import ProgressBar
+from kivy.properties import StringProperty, ObjectProperty
+from kivy.clock import Clock
 from kivy.core.window import Window
+from functools import partial
+from adafruit_ads1x15.analog_in import AnalogIn
+import adafruit_ads1x15.ads1115 as ADS
+import keyboard
 import board
 import busio
-import adafruit_ads1x15.ads1115 as ADS
-from adafruit_ads1x15.analog_in import AnalogIn
 import time
 import RPi.GPIO as GPIO
-from kivy.properties import StringProperty, ObjectProperty
-from kivy.event import EventDispatcher
-from functools import partial
-from kivy.uix.progressbar import ProgressBar
-from kivy.uix.button import Button 
-from kivy.uix.popup import Popup
-from kivy.uix.widget import Widget 
 
 
 TEMPERATURE = 0
 DISTANCE = 0
 DIST_COUNTER = 0
 TEMP_COUNTER = 0
-PROGRESS_BAR = "["
+PROGRESS_COUNTER = 0
 COUNTER = 0
+RIGHT_PEDAL = 16
+LEFT_PEDAL = 21
+RESTART_PEDAL = 20
 
 
 # Window to start the screening
@@ -95,70 +94,83 @@ class EquipmentWindow(Screen):
 # Window to prompt the person to get within temperature measuring distance
 class DistanceWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(self.measure_dist, 1/10)
+        self.event = Clock.schedule_interval(self.measure_dist, 1/30)
         
     def on_pre_leave(self):
+        global DIST_COUNTER
+        global PROGRESS_COUNTER
+        DIST_COUNTER = 0
+        PROGRESS_COUNTER = 0
+        self.ids.progress.value = PROGRESS_COUNTER
         self.event.cancel()
 
     def measure_dist(self, dt):
         global DIST_COUNTER
-        global PROGRESS_BAR
-        
-        print("MEASURING")
+        global PROGRESS_COUNTER
         
         if ReadDistance(17) < 10:
             DIST_COUNTER = DIST_COUNTER + 1
-            self.ids.progress.value = DIST_COUNTER
-            print(DIST_COUNTER)
-            if DIST_COUNTER is 10:
-                print("Distance is good")
-                DIST_COUNTER = 0
+            PROGRESS_COUNTER = PROGRESS_COUNTER + 3.33
+            self.ids.progress.value = PROGRESS_COUNTER
+            if DIST_COUNTER is 30:
                 self.manager.current = "temperature"
         else:
             DIST_COUNTER = 0
+            PROGRESS_COUNTER = 0
+            self.ids.progress.value = PROGRESS_COUNTER
 
 # Window to measure persons temperature
 class TemperatureWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(self.measure_temp, 1/50)
+        self.event = Clock.schedule_interval(self.measure_temp, 1/30)
         
     def on_pre_leave(self):
+        global DISTANCE
+        global PROGRESS_COUNTER
+        DISTANCE = 0
+        PROGRESS_COUNTER = 0
+        self.ids.progress.value = PROGRESS_COUNTER
         self.event.cancel()
         
     def measure_temp(self, dt):
         global TEMPERATURE
         global TEMP_COUNTER
         global DISTANCE
+        global PROGRESS_COUNTER
 
         if ReadDistance(17) < 10:
             test_temperature = 2705.06 + ((-7670.457 - 2705.061) / (1 + (chan.voltage / (3.135016*(10**-8)))**0.0595245))
             if test_temperature > 20 and test_temperature < 45:
                 TEMPERATURE = TEMPERATURE + test_temperature
                 TEMP_COUNTER = TEMP_COUNTER + 1
-                DISTANCE = DISTANCE + ReadDistance(17)
-                if TEMP_COUNTER is 150:
+                PROGRESS_COUNTER = PROGRESS_COUNTER + 1.111
+                self.ids.progress.value = PROGRESS_COUNTER
+                if TEMP_COUNTER is 90:
                     print("Average temperature is:", (TEMPERATURE / TEMP_COUNTER), " Voltage: ", round(chan.voltage, 5), " Distance is:", (DISTANCE/TEMP_COUNTER))
                     if (TEMPERATURE / TEMP_COUNTER) < 40:
                         self.manager.current = "good_temp"
                     else:
                         self.manager.current = "bad_temp"
-                    TEMP_COUNTER = 0
-                    DISTANCE = 0
                     
         else:
-            print("RESTARTING")
             TEMPERATURE = 0
             TEMP_COUNTER = 0
-            DISTANCE = 0
             self.manager.current = "distance"
         
 # Window if the persons temperature was good
 class GoodTempWindow(Screen):
     temperature_display = StringProperty("")
-        
-    def on_enter(self):
+    
+    def on_pre_enter(self):
         global TEMPERATURE
-        self.temperature_display = TEMPERATURE
+        global TEMP_COUNTER
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'distance', 'distance'), 1/20)
+        self.temperature_display = str(round(TEMPERATURE / TEMP_COUNTER, 1))
+        TEMPERATURE = 0
+        TEMP_COUNTER = 0
+        
+    def on_pre_leave(self):
+        self.event.cancel()
 
 # Window if the persons temperature was not good    
 class BadTempWindow(Screen):
@@ -170,18 +182,32 @@ class WindowManager(ScreenManager):
 
 
 def answer_input(instance, right, left, dt):
-    if keyboard.is_pressed('d'):
-        while (keyboard.is_pressed('d')):
+    global RIGHT_PEDAL
+    global LEFT_PEDAL
+    global RESTART_PEDAL
+    
+    if GPIO.input(RIGHT_PEDAL) == 0:
+        while (GPIO.input(RIGHT_PEDAL) == 0):
             pass
         instance.manager.current = right
-    elif keyboard.is_pressed('a'):
-        while (keyboard.is_pressed('a')):
+    elif GPIO.input(LEFT_PEDAL) == 0:
+        while (GPIO.input(LEFT_PEDAL) == 0):
             pass
         instance.manager.current = left
+    
+    #if keyboard.is_pressed('d'):
+        #while (keyboard.is_pressed('d')):
+            #pass
+        #instance.manager.current = right
+    #elif keyboard.is_pressed('a'):
+        #while (keyboard.is_pressed('a')):
+            #pass
+        #instance.manager.current = left
     
 
 # Measure distance from sensor and return the value
 def ReadDistance(pin):
+    counter = 0
     GPIO.setup(pin, GPIO.OUT)
     GPIO.output(pin, 0)
 
@@ -198,6 +224,9 @@ def ReadDistance(pin):
 
     while GPIO.input(pin)==0:
         starttime=time.time()
+        counter = counter + 1
+        if counter == 5000:
+            return 0
 
     while GPIO.input(pin)==1:
         endtime=time.time()
@@ -215,6 +244,9 @@ ads = ADS.ADS1115(i2c)
 chan = AnalogIn(ads, ADS.P0)
 
 GPIO.setmode(GPIO.BCM)
+GPIO.setup(RIGHT_PEDAL,GPIO.IN,pull_up_down=GPIO.PUD_UP)
+GPIO.setup(LEFT_PEDAL,GPIO.IN,pull_up_down=GPIO.PUD_UP)
+GPIO.setup(RESTART_PEDAL,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 
 kv = Builder.load_file("my.kv")
 

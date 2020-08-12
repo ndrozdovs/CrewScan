@@ -25,7 +25,7 @@
             
         ProgressBar:
             id: progress
-            size_hint: (0.8, 0.8)
+            size: self.width, 24
             pos_hint: {"x":0.12, "top":0.35}
 
         Image:
@@ -449,6 +449,11 @@
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":1}
             font_size: 50
+            
+        ProgressBar:
+            id: progress
+            size_hint: (0.8, 0.2)
+            pos_hint: {"x":0.105, "top":0.5}
             
 
 <GoodTempWindow>:
