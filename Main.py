@@ -33,15 +33,9 @@ RESTART_PEDAL = 20
 class BeginWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'info', 'begin'), 1/20)
-        self.event1 = Clock.schedule_interval(self.bullshit, 1/10)
         
     def on_pre_leave(self):
         self.event.cancel()
-        
-    def bullshit(self, dt):
-        global COUNTER
-        self.ids.progress.value = COUNTER
-        COUNTER = COUNTER + 1
  
 # Window to show how to answer to prompts
 class InfoWindow(Screen):
@@ -54,7 +48,7 @@ class InfoWindow(Screen):
 # Window to check for new cough or fever symptoms
 class CoughWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'travel'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'travel'), 1/20)
         
     def on_pre_leave(self):
         self.event.cancel()
@@ -62,7 +56,7 @@ class CoughWindow(Screen):
 # Window to check if person traveled outside of Canada
 class TravelWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'fever'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'fever'), 1/20)
         
     def on_pre_leave(self):
         self.event.cancel()
@@ -70,7 +64,7 @@ class TravelWindow(Screen):
 # Window to check if person has a fever    
 class FeverWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'contact'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'contact'), 1/20)
         
     def on_pre_leave(self):
         self.event.cancel()
@@ -78,7 +72,7 @@ class FeverWindow(Screen):
 # Window to check if person had to contact with an individual with Covid or Covid like symptoms
 class ContactWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'equipment', 'distance'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'distance'), 1/20)
         
     def on_pre_leave(self):
         self.event.cancel()
@@ -86,7 +80,7 @@ class ContactWindow(Screen):
 # Window to check if person was wearing protective equipment if they were exsposed to an individual with Covid
 class EquipmentWindow(Screen):        
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'distance', 'begin'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'distance', 'fail'), 1/20)
         
     def on_pre_leave(self):
         self.event.cancel()
@@ -175,6 +169,13 @@ class GoodTempWindow(Screen):
 # Window if the persons temperature was not good    
 class BadTempWindow(Screen):
     pass
+    
+class FailWindow(Screen):
+    def on_pre_enter(self):
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'fail'), 1/20)
+        
+    def on_pre_leave(self):
+        self.event.cancel()
 
 # Window Manager
 class WindowManager(ScreenManager):
@@ -248,13 +249,15 @@ GPIO.setup(RIGHT_PEDAL,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 GPIO.setup(LEFT_PEDAL,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 GPIO.setup(RESTART_PEDAL,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 
+Window.size = (800, 480)
+
 kv = Builder.load_file("my.kv")
 
 sm = WindowManager(transition=NoTransition())
 screens = [BeginWindow(name="begin"), InfoWindow(name="info"), CoughWindow(name="cough"), TravelWindow(name="travel"),
            FeverWindow(name="fever"), ContactWindow(name="contact"), EquipmentWindow(name="equipment"),
            DistanceWindow(name="distance"), TemperatureWindow(name="temperature"), GoodTempWindow(name="good_temp"),
-           BadTempWindow(name="bad_temp")]
+           BadTempWindow(name="bad_temp"), FailWindow(name="fail")]
 for screen in screens:
     sm.add_widget(screen)
 
