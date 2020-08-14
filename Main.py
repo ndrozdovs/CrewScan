@@ -19,20 +19,18 @@ import RPi.GPIO as GPIO
 
 
 TEMPERATURE = 0
-DISTANCE = 0
 DIST_COUNTER = 0
 TEMP_COUNTER = 0
 PROGRESS_COUNTER = 0
-COUNTER = 0
 RIGHT_PEDAL = 16
 LEFT_PEDAL = 21
-RESTART_PEDAL = 20
+MIDDLE_PEDAL = 20
 
 
 # Window to start the screening
 class BeginWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'info', 'begin'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'info', 'begin', 'begin'), 1/20)
         
     def on_pre_leave(self):
         self.event.cancel()
@@ -40,7 +38,7 @@ class BeginWindow(Screen):
 # Window to show how to answer to prompts
 class InfoWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'cough', 'begin'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'cough', 'begin', 'begin'), 1/20)
         
     def on_pre_leave(self):
         self.event.cancel()
@@ -48,7 +46,7 @@ class InfoWindow(Screen):
 # Window to check for new cough or fever symptoms
 class CoughWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'travel'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'travel', 'begin'), 1/20)
         
     def on_pre_leave(self):
         self.event.cancel()
@@ -56,7 +54,7 @@ class CoughWindow(Screen):
 # Window to check if person traveled outside of Canada
 class TravelWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'fever'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'fever', 'begin'), 1/20)
         
     def on_pre_leave(self):
         self.event.cancel()
@@ -64,7 +62,7 @@ class TravelWindow(Screen):
 # Window to check if person has a fever    
 class FeverWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'contact'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'contact', 'begin'), 1/20)
         
     def on_pre_leave(self):
         self.event.cancel()
@@ -72,7 +70,7 @@ class FeverWindow(Screen):
 # Window to check if person had to contact with an individual with Covid or Covid like symptoms
 class ContactWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'equipment', 'distance'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'equipment', 'distance', 'begin'), 1/20)
         
     def on_pre_leave(self):
         self.event.cancel()
@@ -80,7 +78,7 @@ class ContactWindow(Screen):
 # Window to check if person was wearing protective equipment if they were exsposed to an individual with Covid
 class EquipmentWindow(Screen):        
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'distance', 'fail'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'distance', 'fail', 'begin'), 1/20)
         
     def on_pre_leave(self):
         self.event.cancel()
@@ -119,9 +117,7 @@ class TemperatureWindow(Screen):
         self.event = Clock.schedule_interval(self.measure_temp, 1/30)
         
     def on_pre_leave(self):
-        global DISTANCE
         global PROGRESS_COUNTER
-        DISTANCE = 0
         PROGRESS_COUNTER = 0
         self.ids.progress.value = PROGRESS_COUNTER
         self.event.cancel()
@@ -129,22 +125,22 @@ class TemperatureWindow(Screen):
     def measure_temp(self, dt):
         global TEMPERATURE
         global TEMP_COUNTER
-        global DISTANCE
         global PROGRESS_COUNTER
 
-        if ReadDistance(17) < 10:
-            test_temperature = 2705.06 + ((-7670.457 - 2705.061) / (1 + (chan.voltage / (3.135016*(10**-8)))**0.0595245))
-            if test_temperature > 20 and test_temperature < 45:
-                TEMPERATURE = TEMPERATURE + test_temperature
-                TEMP_COUNTER = TEMP_COUNTER + 1
-                PROGRESS_COUNTER = PROGRESS_COUNTER + 1.111
-                self.ids.progress.value = PROGRESS_COUNTER
-                if TEMP_COUNTER is 90:
-                    print("Average temperature is:", (TEMPERATURE / TEMP_COUNTER), " Voltage: ", round(chan.voltage, 5), " Distance is:", (DISTANCE/TEMP_COUNTER))
-                    if (TEMPERATURE / TEMP_COUNTER) < 40:
-                        self.manager.current = "good_temp"
-                    else:
-                        self.manager.current = "bad_temp"
+        distance = ReadDistance(17)
+        if distance < 10:
+            if distance is not 0:
+                test_temperature = 2705.06 + ((-7670.457 - 2705.061) / (1 + (chan.voltage / (3.135016*(10**-8)))**0.0595245))
+                if test_temperature > 20 and test_temperature < 45:
+                    TEMPERATURE = TEMPERATURE + test_temperature
+                    TEMP_COUNTER = TEMP_COUNTER + 1
+                    PROGRESS_COUNTER = PROGRESS_COUNTER + 1.111
+                    self.ids.progress.value = PROGRESS_COUNTER
+                    if TEMP_COUNTER is 90:
+                        if (TEMPERATURE / TEMP_COUNTER) < 38:
+                            self.manager.current = "good_temp"
+                        else:
+                            self.manager.current = "bad_temp"
                     
         else:
             TEMPERATURE = 0
@@ -158,7 +154,7 @@ class GoodTempWindow(Screen):
     def on_pre_enter(self):
         global TEMPERATURE
         global TEMP_COUNTER
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'distance'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'distance', 'begin'), 1/20)
         self.temperature_display = str(round(TEMPERATURE / TEMP_COUNTER, 1))
         TEMPERATURE = 0
         TEMP_COUNTER = 0
@@ -172,7 +168,7 @@ class BadTempWindow(Screen):
     
 class FailWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'fail'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'fail', 'begin'), 1/20)
         
     def on_pre_leave(self):
         self.event.cancel()
@@ -182,10 +178,10 @@ class WindowManager(ScreenManager):
     pass
 
 
-def answer_input(instance, right, left, dt):
+def answer_input(instance, right, left, middle, dt):
     global RIGHT_PEDAL
     global LEFT_PEDAL
-    global RESTART_PEDAL
+    global MIDDLE_PEDAL
     
     if GPIO.input(RIGHT_PEDAL) == 0:
         while (GPIO.input(RIGHT_PEDAL) == 0):
@@ -195,15 +191,10 @@ def answer_input(instance, right, left, dt):
         while (GPIO.input(LEFT_PEDAL) == 0):
             pass
         instance.manager.current = left
-    
-    #if keyboard.is_pressed('d'):
-        #while (keyboard.is_pressed('d')):
-            #pass
-        #instance.manager.current = right
-    #elif keyboard.is_pressed('a'):
-        #while (keyboard.is_pressed('a')):
-            #pass
-        #instance.manager.current = left
+    elif GPIO.input(MIDDLE_PEDAL) == 0:
+        while (GPIO.input(MIDDLE_PEDAL) == 0):
+            pass
+        instance.manager.current = middle
     
 
 # Measure distance from sensor and return the value
@@ -247,7 +238,7 @@ chan = AnalogIn(ads, ADS.P0)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(RIGHT_PEDAL,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 GPIO.setup(LEFT_PEDAL,GPIO.IN,pull_up_down=GPIO.PUD_UP)
-GPIO.setup(RESTART_PEDAL,GPIO.IN,pull_up_down=GPIO.PUD_UP)
+GPIO.setup(MIDDLE_PEDAL,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 
 Window.size = (800, 480)
 

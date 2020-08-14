@@ -432,8 +432,22 @@
             
         ProgressBar:
             id: progress
+            max: 100
             size_hint: (0.8, 0.2)
-            pos_hint: {"x":0.105, "top":0.5}
+            pos_hint: {"x":0.105, "top":0.6}
+            
+            canvas:
+                BorderImage:
+                    border: (11, 11, 11, 11)
+                    pos: 80, 190
+                    size: 650, 100
+                    source: 'grey.png'
+                    
+                BorderImage:
+                    border: [int(min(self.width * (self.value / float(self.max)) if self.max else 0, 11))] * 4
+                    pos: 80, 235
+                    size: 650 * (self.value / float(self.max)) if self.max else 0, 11
+                    source: 'green.png'
 
             
 <TemperatureWindow>:
@@ -456,8 +470,22 @@
             
         ProgressBar:
             id: progress
+            max: 100
             size_hint: (0.8, 0.2)
-            pos_hint: {"x":0.105, "top":0.5}
+            pos_hint: {"x":0.105, "top":0.6}
+            
+            canvas:
+                BorderImage:
+                    border: (11, 11, 11, 11)
+                    pos: 80, 190
+                    size: 650, 100
+                    source: 'grey.png'
+                    
+                BorderImage:
+                    border: [int(min(self.width * (self.value / float(self.max)) if self.max else 0, 11))] * 4
+                    pos: 80, 235
+                    size: 650 * (self.value / float(self.max)) if self.max else 0, 11
+                    source: 'green.png'
             
 
 <GoodTempWindow>:
@@ -523,13 +551,13 @@
         cols:1
 
         Label:
-            text: "Access denied: Secondary screening"
+            text: "Site access denied:"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":1}
             font_size: 40
             
         Label:
-            text: "is Recommended"
+            text: "Secondary screening is recommended"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.9}
             font_size: 40
