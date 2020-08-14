@@ -2,11 +2,10 @@
     name: "begin"
 
     canvas.before:
-        Color:
-            rgba: 0.65, 0.65, 0.65, 0.25
         Rectangle:
             pos: self.pos
             size: self.size
+            source: 'CrewScan_background.png'
 
     FloatLayout:
         cols:1
@@ -22,11 +21,6 @@
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.12, "top":0.55}
             font_size: 50
-            
-        ProgressBar:
-            id: progress
-            size: self.width, 24
-            pos_hint: {"x":0.12, "top":0.35}
 
         Image:
             source: 'GreenCircle.png'
@@ -38,11 +32,10 @@
     name: "info"
     
     canvas.before:
-        Color:
-            rgba: 0.65, 0.65, 0.65, 0.25
         Rectangle:
             pos: self.pos
             size: self.size
+            source: 'CrewScan_background.png'
 
     FloatLayout:
         cols:1
@@ -112,11 +105,10 @@
     name: "cough"
 
     canvas.before:
-        Color:
-            rgba: 0.65, 0.65, 0.65, 0.25
         Rectangle:
             pos: self.pos
             size: self.size
+            source: 'CrewScan_background.png'
 
     FloatLayout:
         cols:1
@@ -174,11 +166,10 @@
     name: "travel"
 
     canvas.before:
-        Color:
-            rgba: 0.65, 0.65, 0.65, 0.25
         Rectangle:
             pos: self.pos
             size: self.size
+            source: 'CrewScan_background.png'
 
     FloatLayout:
         cols:1
@@ -236,11 +227,10 @@
     name: "fever"
 
     canvas.before:
-        Color:
-            rgba: 0.65, 0.65, 0.65, 0.25
         Rectangle:
             pos: self.pos
             size: self.size
+            source: 'CrewScan_background.png'
 
     FloatLayout:
         cols:1
@@ -280,11 +270,10 @@
     name: "contact"
 
     canvas.before:
-        Color:
-            rgba: 0.65, 0.65, 0.65, 0.25
         Rectangle:
             pos: self.pos
             size: self.size
+            source: 'CrewScan_background.png'
 
     FloatLayout:
         cols:1
@@ -342,11 +331,10 @@
     name: "equipment"
 
     canvas.before:
-        Color:
-            rgba: 0.65, 0.65, 0.65, 0.25
         Rectangle:
             pos: self.pos
             size: self.size
+            source: 'CrewScan_background.png'
 
     FloatLayout:
         cols:1
@@ -410,11 +398,10 @@
     name: "distance"
 
     canvas.before:
-        Color:
-            rgba: 0.65, 0.65, 0.65, 0.25
         Rectangle:
             pos: self.pos
             size: self.size
+            source: 'CrewScan_background.png'
 
     FloatLayout:
         cols:1
@@ -435,11 +422,10 @@
     name: "temperature"
 
     canvas.before:
-        Color:
-            rgba: 0.65, 0.65, 0.65, 0.25
         Rectangle:
             pos: self.pos
             size: self.size
+            source: 'CrewScan_background.png'
 
     FloatLayout:
         cols:1
@@ -460,11 +446,10 @@
     name: "good_temp"
 
     canvas.before:
-        Color:
-            rgba: 0.65, 0.65, 0.65, 0.25
         Rectangle:
             pos: self.pos
             size: self.size
+            source: 'CrewScan_background.png'
 
     FloatLayout:
         cols:1
@@ -487,11 +472,10 @@
     name: "bad_temp"
 
     canvas.before:
-        Color:
-            rgba: 0.65, 0.65, 0.65, 0.25
         Rectangle:
             pos: self.pos
             size: self.size
+            source: 'CrewScan_background.png'
 
     FloatLayout:
         cols:1
@@ -500,4 +484,28 @@
             text: "Temperature too high"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":1}
+            font_size: 50
+            
+<FailWindow>:
+    name: "fail"
+
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'CrewScan_background.png'
+            
+    FloatLayout:
+        cols:1
+
+        Label:
+            text: "Access denied: Secondary screening"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":1}
+            font_size: 50
+            
+        Label:
+            text: "is Recommended"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.9}
             font_size: 50
