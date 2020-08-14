@@ -72,7 +72,7 @@ class FeverWindow(Screen):
 # Window to check if person had to contact with an individual with Covid or Covid like symptoms
 class ContactWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'distance'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'equipment', 'distance'), 1/20)
         
     def on_pre_leave(self):
         self.event.cancel()
@@ -158,7 +158,7 @@ class GoodTempWindow(Screen):
     def on_pre_enter(self):
         global TEMPERATURE
         global TEMP_COUNTER
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'distance', 'distance'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'distance'), 1/20)
         self.temperature_display = str(round(TEMPERATURE / TEMP_COUNTER, 1))
         TEMPERATURE = 0
         TEMP_COUNTER = 0
