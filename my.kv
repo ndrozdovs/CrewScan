@@ -561,3 +561,22 @@
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.9}
             font_size: 40
+            
+<Popups>:
+    Label: 
+        text: "Are you still there?"
+        size_hint: 0.8, 0.2
+        pos_hint: {"x":0.105, "top":0.8}
+        
+    Image:
+        source: 'GreenCircle.png'
+        size: self.texture_size
+        size_hint: 0.1, 0.1
+        pos_hint: {"x":0.37, "top":0.247}
+        
+    ProgressBar:
+        id: progress
+        size_hint: (0.8, 0.8)
+        pos_hint: {"x":0.12, "top":0.45}
+
+        
