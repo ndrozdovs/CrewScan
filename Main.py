@@ -37,7 +37,7 @@ POP_ACTIVE = 0
 class BeginWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'info', 'begin', 'begin'), 1/20)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self), 1)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 0, 0), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -49,7 +49,7 @@ class BeginWindow(Screen):
 class InfoWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'cough', 'begin', 'begin'), 1/20)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self), 1)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -61,7 +61,7 @@ class InfoWindow(Screen):
 class CoughWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'travel', 'begin'), 1/20)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self), 1)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -73,7 +73,7 @@ class CoughWindow(Screen):
 class TravelWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'fever', 'begin'), 1/20)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self), 1)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -85,7 +85,7 @@ class TravelWindow(Screen):
 class FeverWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'contact', 'begin'), 1/20)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self), 1)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -97,7 +97,7 @@ class FeverWindow(Screen):
 class ContactWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'equipment', 'distance', 'begin'), 1/20)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self), 1)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -109,7 +109,7 @@ class ContactWindow(Screen):
 class EquipmentWindow(Screen):        
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'distance', 'fail', 'begin'), 1/20)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self), 1)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -121,7 +121,7 @@ class EquipmentWindow(Screen):
 class DistanceWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(self.measure_dist, 1/30)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self), 1)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         
     def on_pre_leave(self):
         global DIST_COUNTER
@@ -138,6 +138,11 @@ class DistanceWindow(Screen):
         global DIST_COUNTER
         global PROGRESS_COUNTER
         
+        if GPIO.input(MIDDLE_PEDAL) == 0:
+            while (GPIO.input(MIDDLE_PEDAL) == 0):
+                pass
+            self.manager.current = 'begin'
+        
         if ReadDistance(17) < 10:
             DIST_COUNTER = DIST_COUNTER + 1
             PROGRESS_COUNTER = PROGRESS_COUNTER + 3.33
@@ -153,7 +158,7 @@ class DistanceWindow(Screen):
 class TemperatureWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(self.measure_temp, 1/30)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self), 1)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         
     def on_pre_leave(self):
         global PROGRESS_COUNTER
@@ -168,6 +173,12 @@ class TemperatureWindow(Screen):
         global TEMPERATURE
         global TEMP_COUNTER
         global PROGRESS_COUNTER
+        global MIDDLE_PEDAL
+        
+        if GPIO.input(MIDDLE_PEDAL) == 0:
+            while (GPIO.input(MIDDLE_PEDAL) == 0):
+                pass
+            self.manager.current = 'begin'
 
         distance = ReadDistance(17)
         if distance < 10:
@@ -197,7 +208,7 @@ class GoodTempWindow(Screen):
         global TEMPERATURE
         global TEMP_COUNTER
         self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'distance', 'begin'), 1/20)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self), 1)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 10, 0), 1)
         self.temperature_display = str(round(TEMPERATURE / TEMP_COUNTER, 1))
         TEMPERATURE = 0
         TEMP_COUNTER = 0
@@ -216,7 +227,7 @@ class GoodTempWindow(Screen):
 class BadTempWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'fail', 'begin'), 1/20)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self), 1)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 10, 0), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -227,7 +238,7 @@ class BadTempWindow(Screen):
 class FailWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'fail', 'begin'), 1/20)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self), 1)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 10, 0), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -273,21 +284,25 @@ def answer_input(instance, right, left, middle, dt):
             TIMEOUT_COUNTER = 0
         
         
-def timeout_check(instance, dt):
+def timeout_check(instance, timeout_val, activate_pop, dt):
     global TIMEOUT_COUNTER
     global POP_ACTIVE
     TIMEOUT_COUNTER = TIMEOUT_COUNTER + 1
     
     if instance.manager.current is not 'begin':
-        if TIMEOUT_COUNTER is 10:
-            timeout_pop(instance)
-            POP_ACTIVE = 1
-        if TIMEOUT_COUNTER >= 10:
-            instance.show.ids.progress.value = 10 * (TIMEOUT_COUNTER - 10)
-        if TIMEOUT_COUNTER is 20 and POP_ACTIVE == 1:
-            instance.manager.current = 'begin'
-            instance.pop.dismiss()
-            POP_ACTIVE = 0
+        if activate_pop == 1:
+            if TIMEOUT_COUNTER is timeout_val:
+                timeout_pop(instance)
+                POP_ACTIVE = 1
+            if TIMEOUT_COUNTER >= timeout_val:
+                instance.show.ids.progress.value = 10 * (TIMEOUT_COUNTER - timeout_val)
+            if TIMEOUT_COUNTER is (timeout_val + 10) and POP_ACTIVE == 1:
+                instance.manager.current = 'begin'
+                instance.pop.dismiss()
+                POP_ACTIVE = 0
+        else:
+            if TIMEOUT_COUNTER is timeout_val:
+                instance.manager.current = 'begin'
 
 
 def timeout_pop(instance):
