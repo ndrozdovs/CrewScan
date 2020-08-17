@@ -30,6 +30,7 @@ TIMEOUT_COUNTER = 0
 RIGHT_PEDAL = 16
 LEFT_PEDAL = 21
 MIDDLE_PEDAL = 20
+POP_ACTIVE = 0
 
 
 # Window to start the screening
@@ -202,6 +203,7 @@ class GoodTempWindow(Screen):
         TEMP_COUNTER = 0
         
     def on_enter(self):
+        pass
         os.system("brother_ql -b pyusb -m QL-700 -p usb://0x04f9:0x2042 print -l 62 pil_text.png")
         
     def on_pre_leave(self):
@@ -236,7 +238,8 @@ class FailWindow(Screen):
 # Window Manager
 class WindowManager(ScreenManager):
     pass
-    
+ 
+# Used for adding text and progress bar for the pop up window in .kv file  
 class Popups(FloatLayout): 
     pass
 
@@ -246,8 +249,9 @@ def answer_input(instance, right, left, middle, dt):
     global LEFT_PEDAL
     global MIDDLE_PEDAL
     global TIMEOUT_COUNTER
+    global POP_ACTIVE
     
-    if TIMEOUT_COUNTER > 0:
+    if TIMEOUT_COUNTER > 0 and POP_ACTIVE == 0:
         if GPIO.input(RIGHT_PEDAL) == 0:
             while (GPIO.input(RIGHT_PEDAL) == 0):
                 pass
@@ -260,21 +264,30 @@ def answer_input(instance, right, left, middle, dt):
             while (GPIO.input(MIDDLE_PEDAL) == 0):
                 pass
             instance.manager.current = middle
+    elif POP_ACTIVE == 1:
+        if GPIO.input(RIGHT_PEDAL) == 0:
+            while (GPIO.input(RIGHT_PEDAL) == 0):
+                pass
+            instance.pop.dismiss()
+            POP_ACTIVE = 0
+            TIMEOUT_COUNTER = 0
         
-
+        
 def timeout_check(instance, dt):
     global TIMEOUT_COUNTER
+    global POP_ACTIVE
     TIMEOUT_COUNTER = TIMEOUT_COUNTER + 1
     
     if instance.manager.current is not 'begin':
-        if TIMEOUT_COUNTER is 50:
+        if TIMEOUT_COUNTER is 10:
             timeout_pop(instance)
-            instance.pop.open()
-        if TIMEOUT_COUNTER >= 50:
-            instance.show.ids.progress.value = 10 * (TIMEOUT_COUNTER - 5)
-        if TIMEOUT_COUNTER is 60:
+            POP_ACTIVE = 1
+        if TIMEOUT_COUNTER >= 10:
+            instance.show.ids.progress.value = 10 * (TIMEOUT_COUNTER - 10)
+        if TIMEOUT_COUNTER is 20 and POP_ACTIVE == 1:
             instance.manager.current = 'begin'
             instance.pop.dismiss()
+            POP_ACTIVE = 0
 
 
 def timeout_pop(instance):
