@@ -183,7 +183,8 @@ class TemperatureWindow(Screen):
         distance = ReadDistance(17)
         if distance < 10:
             if distance is not 0:
-                test_temperature = 2705.06 + ((-7670.457 - 2705.061) / (1 + (chan.voltage / (3.135016*(10**-8)))**0.0595245))
+                voltage = chan.voltage + 0.05
+                test_temperature = 2705.06 + ((-7670.457 - 2705.061) / (1 + (voltage / (3.135016*(10**-8)))**0.0595245))
                 if test_temperature > 20 and test_temperature < 45:
                     TEMPERATURE = TEMPERATURE + test_temperature
                     TEMP_COUNTER = TEMP_COUNTER + 1
@@ -341,7 +342,6 @@ def ReadDistance(pin):
     # Distance is defined as time/2 (there and back) * speed of sound 34000 cm/s 
     distance=duration*34000/2
     return distance
-
 
 i2c = busio.I2C(board.SCL, board.SDA)
 ads = ADS.ADS1115(i2c)       #Create ADC object
