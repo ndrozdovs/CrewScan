@@ -14,6 +14,7 @@ from adafruit_ads1x15.analog_in import AnalogIn
 from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime
 import os
+import subprocess
 import adafruit_ads1x15.ads1115 as ADS
 import keyboard
 import board
@@ -31,6 +32,7 @@ RIGHT_PEDAL = 16
 LEFT_PEDAL = 21
 MIDDLE_PEDAL = 20
 POP_ACTIVE = 0
+PRINTER_FOUND = 1
 
 
 # Window to start the screening
@@ -138,6 +140,8 @@ class DistanceWindow(Screen):
         global DIST_COUNTER
         global PROGRESS_COUNTER
         
+        check_printer(self, dt)
+        
         if GPIO.input(MIDDLE_PEDAL) == 0:
             while (GPIO.input(MIDDLE_PEDAL) == 0):
                 pass
@@ -174,6 +178,8 @@ class TemperatureWindow(Screen):
         global TEMP_COUNTER
         global PROGRESS_COUNTER
         global MIDDLE_PEDAL
+        
+        check_printer(self, dt)
         
         if GPIO.input(MIDDLE_PEDAL) == 0:
             while (GPIO.input(MIDDLE_PEDAL) == 0):
@@ -246,6 +252,13 @@ class FailWindow(Screen):
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
+        
+class PrinterWindow(Screen):
+    def on_pre_enter(self):
+        self.event = Clock.schedule_interval(partial(check_printer, self), 1)
+        
+    def on_pre_leave(self):
+        self.event.cancel()
 
 # Window Manager
 class WindowManager(ScreenManager):
@@ -262,8 +275,11 @@ def answer_input(instance, right, left, middle, dt):
     global MIDDLE_PEDAL
     global TIMEOUT_COUNTER
     global POP_ACTIVE
+    global PRINTER_FOUND
     
-    if TIMEOUT_COUNTER > 0 and POP_ACTIVE == 0:
+    check_printer(instance, dt)
+    
+    if TIMEOUT_COUNTER > 0 and POP_ACTIVE == 0 and PRINTER_FOUND == 1:
         if GPIO.input(RIGHT_PEDAL) == 0:
             while (GPIO.input(RIGHT_PEDAL) == 0):
                 pass
@@ -288,9 +304,10 @@ def answer_input(instance, right, left, middle, dt):
 def timeout_check(instance, timeout_val, activate_pop, dt):
     global TIMEOUT_COUNTER
     global POP_ACTIVE
+    global PRINTER_FOUND
     TIMEOUT_COUNTER = TIMEOUT_COUNTER + 1
     
-    if instance.manager.current is not 'begin':
+    if instance.manager.current is not 'begin' and PRINTER_FOUND == 1:
         if activate_pop == 1:
             if TIMEOUT_COUNTER is timeout_val:
                 timeout_pop(instance)
@@ -310,6 +327,23 @@ def timeout_pop(instance):
     instance.show = Popups()    
     instance.pop = Popup(title='Warning', content=instance.show, size_hint=(None, None), size=(400, 250))
     instance.pop.open()
+    
+    
+def check_printer(instance, dt):
+    global POP_ACTIVE
+    global PRINTER_FOUND
+    
+    if "04f9:2042" not in str(subprocess.check_output("lsusb", shell=True)):
+        PRINTER_FOUND = 0
+        instance.manager.current = 'printer'
+        if POP_ACTIVE == 1:
+            instance.pop.dismiss()
+            POP_ACTIVE = 0
+            TIMEOUT_COUNTER = 0            
+    else:
+        if PRINTER_FOUND == 0:
+            instance.manager.current = 'begin'
+            PRINTER_FOUND = 1
     
 
 # Measure distance from sensor and return the value
@@ -360,7 +394,7 @@ sm = WindowManager(transition=NoTransition())
 screens = [BeginWindow(name="begin"), InfoWindow(name="info"), CoughWindow(name="cough"), TravelWindow(name="travel"),
            FeverWindow(name="fever"), ContactWindow(name="contact"), EquipmentWindow(name="equipment"),
            DistanceWindow(name="distance"), TemperatureWindow(name="temperature"), GoodTempWindow(name="good_temp"),
-           BadTempWindow(name="bad_temp"), FailWindow(name="fail")]
+           BadTempWindow(name="bad_temp"), FailWindow(name="fail"), PrinterWindow(name="printer")]
 for screen in screens:
     sm.add_widget(screen)
 

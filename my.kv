@@ -519,7 +519,6 @@
             font_size: 40
             
             
-            
 <BadTempWindow>:
     name: "bad_temp"
 
@@ -538,6 +537,7 @@
             pos_hint: {"x":0.105, "top":0.8}
             font_size: 40
             
+
 <FailWindow>:
     name: "fail"
 
@@ -561,6 +561,32 @@
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.9}
             font_size: 40
+            
+
+<PrinterWindow>:
+    name: "printer"
+
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'CrewScan_background_orange.jpg'
+            
+    FloatLayout:
+        cols:1
+
+        Label:
+            text: "Printer is offline:"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":1}
+            font_size: 40
+            
+        Label:
+            text: "Please contact the manufacturer"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.9}
+            font_size: 40
+
             
 <Popups>:
     Label: 

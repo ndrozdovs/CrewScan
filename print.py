@@ -1,10 +1,15 @@
 from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime
 import os
+import subprocess
 
 fontPath = "/usr/share/fonts/truetype/freefont/FreeMono.ttf"
 mono_14 = ImageFont.truetype(fontPath, 14)
 mono_20 = ImageFont.truetype(fontPath, 20)
+result = subprocess.check_output("lsusb", shell=True)
+print(result)
+if "04f9:2042" in str(result):
+	print("oh baby")
  
 img = Image.new('RGB', (200, 100), color = (255, 255, 255))
 
