@@ -12,7 +12,7 @@ from kivy.core.window import Window
 from functools import partial
 from adafruit_ads1x15.analog_in import AnalogIn
 from PIL import Image, ImageDraw, ImageFont
-from datetime import date
+from datetime import datetime
 import os
 import adafruit_ads1x15.ads1115 as ADS
 import keyboard
@@ -366,12 +366,17 @@ for screen in screens:
 
 # Create a png image file with todays date, print it if access to site was granted    
 fontPath = "/usr/share/fonts/truetype/freefont/FreeMono.ttf"
-font_mono = ImageFont.truetype(fontPath, 14)
- 
-img = Image.new('RGB', (200, 100), color = (255, 255, 255)) 
+mono_14 = ImageFont.truetype(fontPath, 14)
+mono_20 = ImageFont.truetype(fontPath, 20)
+  
+img = Image.new('RGB', (200, 100), color = (255, 255, 255))
+dt_string = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
 d = ImageDraw.Draw(img)
-d.text((5,30), "Access to Site Granted:", fill=(0,0,0), font=font_mono)
-d.text((60,50), str(date.today()), fill=(0,0,0), font=font_mono)
+d.text((25,0), "Visitor Pass", fill=(0,0,0), font=mono_20)
+d.text((12,5), "______________", fill=(0,0,0), font=mono_20)
+d.text((5,30), "Access to Site Granted:", fill=(0,0,0), font=mono_14)
+d.text((20,50), str(dt_string), fill=(0,0,0), font=mono_14)
+d.text((150,88), "SetTek", fill=(0,0,0), font=mono_14) 
 img.save('pil_text.png')
 
 
