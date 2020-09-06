@@ -40,90 +40,105 @@ class BeginWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'info', 'begin', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 0, 0), 1)
+        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
+        self.printer.cancel()
  
 # Window to show how to answer to prompts
 class InfoWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'cough', 'begin', 'begin'), 1/20)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 1, 1), 1)
+        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
+        self.printer.cancel()
 
 # Window to check for new cough or fever symptoms
 class CoughWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'travel', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
+        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
+        self.printer.cancel()
 
 # Window to check if person traveled outside of Canada
 class TravelWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'fever', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
+        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
+        self.printer.cancel()
 
 # Window to check if person has a fever    
 class FeverWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'contact', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
+        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
+        self.printer.cancel()
  
 # Window to check if person had to contact with an individual with Covid or Covid like symptoms
 class ContactWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'equipment', 'distance', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
+        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
+        self.printer.cancel()
 
 # Window to check if person was wearing protective equipment if they were exsposed to an individual with Covid
 class EquipmentWindow(Screen):        
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'distance', 'fail', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
+        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
+        self.printer.cancel()
 
 # Window to prompt the person to get within temperature measuring distance
 class DistanceWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(self.measure_dist, 1/30)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
+        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
         
     def on_pre_leave(self):
         global DIST_COUNTER
@@ -135,12 +150,11 @@ class DistanceWindow(Screen):
         self.ids.progress.value = PROGRESS_COUNTER
         self.event.cancel()
         self.timeout.cancel()
+        self.printer.cancel()
 
     def measure_dist(self, dt):
         global DIST_COUNTER
         global PROGRESS_COUNTER
-        
-        check_printer(self, dt)
         
         if GPIO.input(MIDDLE_PEDAL) == 0:
             while (GPIO.input(MIDDLE_PEDAL) == 0):
@@ -163,6 +177,7 @@ class TemperatureWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(self.measure_temp, 1/30)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
+        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
         
     def on_pre_leave(self):
         global PROGRESS_COUNTER
@@ -172,14 +187,13 @@ class TemperatureWindow(Screen):
         self.ids.progress.value = PROGRESS_COUNTER
         self.event.cancel()
         self.timeout.cancel()
+        self.printer.cancel()
         
     def measure_temp(self, dt):
         global TEMPERATURE
         global TEMP_COUNTER
         global PROGRESS_COUNTER
         global MIDDLE_PEDAL
-        
-        check_printer(self, dt)
         
         if GPIO.input(MIDDLE_PEDAL) == 0:
             while (GPIO.input(MIDDLE_PEDAL) == 0):
@@ -216,6 +230,7 @@ class GoodTempWindow(Screen):
         global TEMP_COUNTER
         self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'distance', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 10, 0), 1)
+        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
         self.temperature_display = str(round(TEMPERATURE / TEMP_COUNTER, 1))
         TEMPERATURE = 0
         TEMP_COUNTER = 0
@@ -229,37 +244,42 @@ class GoodTempWindow(Screen):
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
+        self.printer.cancel()
 
 # Window if the persons temperature was not good    
 class BadTempWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'fail', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 10, 0), 1)
+        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
+        self.printer.cancel()
     
 class FailWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'fail', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 10, 0), 1)
+        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
+        self.printer.cancel()
         
 class PrinterWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(check_printer, self), 1)
+        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
         
     def on_pre_leave(self):
-        self.event.cancel()
-
+        self.printer.cancel()
+        
 # Window Manager
 class WindowManager(ScreenManager):
     pass
@@ -276,8 +296,6 @@ def answer_input(instance, right, left, middle, dt):
     global TIMEOUT_COUNTER
     global POP_ACTIVE
     global PRINTER_FOUND
-    
-    check_printer(instance, dt)
     
     if TIMEOUT_COUNTER > 0 and POP_ACTIVE == 0 and PRINTER_FOUND == 1:
         if GPIO.input(RIGHT_PEDAL) == 0:
@@ -386,7 +404,7 @@ GPIO.setup(RIGHT_PEDAL,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 GPIO.setup(LEFT_PEDAL,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 GPIO.setup(MIDDLE_PEDAL,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 
-Window.size = (800, 480)
+#Window.size = (480, 800)
 
 kv = Builder.load_file("my.kv")
 
@@ -420,5 +438,5 @@ class MyApp(App):
 
 
 if __name__ == "__main__":
-    # Window.fullscreen = 'auto'
+    Window.fullscreen = 'auto'
     MyApp().run()

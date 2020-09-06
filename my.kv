@@ -13,13 +13,13 @@
         Label:
             text: "Press        to Begin"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.1, "top":0.65}
+            pos_hint: {"x":0.105, "top":0.65}
             font_size: 40
 
         Image:
             source: 'GreenCircle.png'
             size_hint: 0.15, 0.15
-            pos_hint: {"x":0.395, "top":0.625}
+            pos_hint: {"x":0.38, "top":0.625}
 
 
 <InfoWindow>:
@@ -37,68 +37,80 @@
         Label:
             text: "Please answer"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.095, "top":1}
+            pos_hint: {"x":0.095, "top":0.98}
             font_size: 40
 
         Label:
             text: "the following"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.095, "top":0.9}
+            pos_hint: {"x":0.095, "top":0.92}
             font_size: 40
 
         Label:
-            text: "using      for yes, and      for no"
+            text: "using      for yes,"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.09, "top":0.8}
+            pos_hint: {"x":0.101, "top":0.86}
             font_size: 40
             
         Label:
-            text: "Press      at any moment to restart"
+            text: "and      for no"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.6}
+            pos_hint: {"x":0.095, "top":0.8}
+            font_size: 40
+            
+        Label:
+            text: "Press      at any moment"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.1045, "top":0.68}
+            font_size: 40
+            
+        Label:
+            text: "to restart"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.1045, "top":0.62}
             font_size: 40
 
         Label:
             text: "Continue"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.1392, "top":0.3}
+            pos_hint: {"x":0.158, "top":0.22}
             font_size: 40
 
         Label:
             text: "Cancel"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.117, "top":0.172}
+            pos_hint: {"x":0.12, "top":0.15}
             font_size: 40
 
         Image:
             source: 'GreenCircle.png'
             size: self.texture_size
             size_hint: 0.11, 0.11
-            pos_hint: {"x":0.263, "top":0.75}
+            pos_hint: {"x":0.4125, "top":0.8115}
 
         Image:
             source: 'RedTriangle.png'
             size: self.texture_size
             size_hint: 0.09, 0.09
-            pos_hint: {"x":0.608, "top":0.745}
+            pos_hint: {"x":0.41, "top":0.745}
       
         Image:
             source: 'YellowSquare.png'
             size: self.texture_size
             size_hint: 0.085, 0.085
-            pos_hint: {"x":0.25, "top":0.54}
+            pos_hint: {"x":0.29, "top":0.62}
 
         Image:
             source: 'GreenCircle.png'
             size: self.texture_size
             size_hint: 0.11, 0.11
-            pos_hint: {"x":0.31, "top":0.247}
+            pos_hint: {"x":0.28, "top":0.175}
 
         Image:
             source: 'RedTriangle.png'
             size: self.texture_size
             size_hint: 0.09, 0.09
-            pos_hint: {"x":0.32, "top":0.127}
+            pos_hint: {"x":0.292, "top":0.096}
 
 
 <CoughWindow>:
@@ -116,50 +128,50 @@
         Label:
             text: "Do you have any of the"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":1}
+            pos_hint: {"x":0.102, "top":0.98}
             font_size: 40
 
         Label:
             text: "following symptoms?"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.9}
+            pos_hint: {"x":0.102, "top":0.92}
             font_size: 40
 
         Label:
             text: " > New or worsening cough"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.7}
+            pos_hint: {"x":0.089, "top":0.8}
             font_size: 40
 
         Label:
             text: " > Fever"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.6}
+            pos_hint: {"x":0.09, "top":0.74}
             font_size: 40
 
         Label:
             text: "Yes"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.125, "top":0.3}
+            pos_hint: {"x":0.150, "top":0.22}
             font_size: 40
 
         Label:
             text: "No"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.125, "top":0.172}
+            pos_hint: {"x":0.132, "top":0.15}
             font_size: 40
 
         Image:
             source: 'GreenCircle.png'
             size: self.texture_size
-            size_hint: 0.1, 0.1
-            pos_hint: {"x":0.37, "top":0.247}
+            size_hint: 0.11, 0.11
+            pos_hint: {"x":0.368, "top":0.175}
 
         Image:
             source: 'RedTriangle.png'
             size: self.texture_size
-            size_hint: 0.1, 0.1
-            pos_hint: {"x":0.37, "top":0.127}
+            size_hint: 0.09, 0.09
+            pos_hint: {"x":0.378, "top":0.096}
 
 
 <TravelWindow>:
@@ -177,56 +189,62 @@
         Label:
             text: "Have you traveled"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":1}
+            pos_hint: {"x":0.105, "top":0.98}
             font_size: 40
             
         Label:
-            text: "outside of Canada or had close"
+            text: "outside of Canada or had"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.9}
+            pos_hint: {"x":0.105, "top":0.92}
             font_size: 40
 
         Label:
-            text: "contact with anyone that has"
+            text: "close contact with anyone"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.86}
+            font_size: 40
+            
+        Label:
+            text: "that has travelled outside"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.8}
             font_size: 40
             
         Label:
-            text: "travelled outside of Canada in"
+            text: "of Canada in the past"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.7}
+            pos_hint: {"x":0.105, "top":0.74}
             font_size: 40
             
         Label:
-            text: "the past 14 days?"
+            text: "4 days?"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.6}
+            pos_hint: {"x":0.105, "top":0.68}
             font_size: 40
 
         Label:
             text: "Yes"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.125, "top":0.3}
+            pos_hint: {"x":0.150, "top":0.22}
             font_size: 40
 
         Label:
             text: "No"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.125, "top":0.172}
+            pos_hint: {"x":0.132, "top":0.15}
             font_size: 40
 
         Image:
             source: 'GreenCircle.png'
             size: self.texture_size
-            size_hint: 0.1, 0.1
-            pos_hint: {"x":0.37, "top":0.247}
+            size_hint: 0.11, 0.11
+            pos_hint: {"x":0.368, "top":0.175}
 
         Image:
             source: 'RedTriangle.png'
             size: self.texture_size
-            size_hint: 0.1, 0.1
-            pos_hint: {"x":0.37, "top":0.127}
+            size_hint: 0.09, 0.09
+            pos_hint: {"x":0.378, "top":0.096}
             
 
 <FeverWindow>:
@@ -244,32 +262,32 @@
         Label:
             text: "Do you have a fever?"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":1}
+            pos_hint: {"x":0.105, "top":0.98}
             font_size: 40
 
         Label:
             text: "Yes"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.125, "top":0.3}
+            pos_hint: {"x":0.150, "top":0.22}
             font_size: 40
 
         Label:
             text: "No"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.125, "top":0.172}
+            pos_hint: {"x":0.132, "top":0.15}
             font_size: 40
 
         Image:
             source: 'GreenCircle.png'
             size: self.texture_size
-            size_hint: 0.1, 0.1
-            pos_hint: {"x":0.37, "top":0.247}
+            size_hint: 0.11, 0.11
+            pos_hint: {"x":0.368, "top":0.175}
 
         Image:
             source: 'RedTriangle.png'
             size: self.texture_size
-            size_hint: 0.1, 0.1
-            pos_hint: {"x":0.37, "top":0.127}
+            size_hint: 0.09, 0.09
+            pos_hint: {"x":0.378, "top":0.096}
             
             
 <ContactWindow>:
@@ -287,50 +305,56 @@
         Label:
             text: "Have you had close"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":1}
+            pos_hint: {"x":0.105, "top":0.98}
             font_size: 40
 
         Label:
-            text: "contact with anyone with respiratory"
+            text: "contact with anyone with"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.9}
+            pos_hint: {"x":0.105, "top":0.92}
             font_size: 40
 
         Label:
-            text: "illness or a confirmed or probable"
+            text: "respiratory illness or a"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.86}
+            font_size: 40
+
+        Label:
+            text: "confirmed or probable"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.8}
             font_size: 40
-
+            
         Label:
             text: "case of COVID-19?"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.7}
+            pos_hint: {"x":0.105, "top":0.74}
             font_size: 40
 
         Label:
             text: "Yes"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.125, "top":0.3}
+            pos_hint: {"x":0.150, "top":0.22}
             font_size: 40
 
         Label:
             text: "No"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.125, "top":0.172}
+            pos_hint: {"x":0.132, "top":0.15}
             font_size: 40
 
         Image:
             source: 'GreenCircle.png'
             size: self.texture_size
-            size_hint: 0.1, 0.1
-            pos_hint: {"x":0.37, "top":0.247}
+            size_hint: 0.11, 0.11
+            pos_hint: {"x":0.368, "top":0.175}
 
         Image:
             source: 'RedTriangle.png'
             size: self.texture_size
-            size_hint: 0.1, 0.1
-            pos_hint: {"x":0.37, "top":0.127}
+            size_hint: 0.09, 0.09
+            pos_hint: {"x":0.378, "top":0.096}
             
             
 <EquipmentWindow>:
@@ -348,62 +372,74 @@
         Label:
             text: "Did you wear the required"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":1}
+            pos_hint: {"x":0.105, "top":0.98}
             font_size: 40
 
         Label:
-            text: "and/or recommended PPE according"
+            text: "and/or recommended"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.9}
+            pos_hint: {"x":0.105, "top":0.92}
             font_size: 40
 
         Label:
-            text: "to the type of duties you were"
+            text: "PPE according to the"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.86}
+            font_size: 40
+            
+        Label:
+            text: "type of duties you"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.8}
             font_size: 40
             
         Label:
-            text: "performing when you had close"
+            text: "were performing when you"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.7}
+            pos_hint: {"x":0.105, "top":0.74}
             font_size: 40
             
         Label:
-            text: "with a suspected or confirmed"
+            text: "had close contact with"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.6}
+            pos_hint: {"x":0.105, "top":0.68}
+            font_size: 40
+            
+        Label:
+            text: "a suspected or confirmed"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.62}
             font_size: 40
             
         Label:
             text: "case of COVID-19?"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.5}
+            pos_hint: {"x":0.105, "top":0.56}
             font_size: 40
 
         Label:
             text: "Yes"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.125, "top":0.3}
+            pos_hint: {"x":0.150, "top":0.22}
             font_size: 40
 
         Label:
             text: "No"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.125, "top":0.172}
+            pos_hint: {"x":0.132, "top":0.15}
             font_size: 40
 
         Image:
             source: 'GreenCircle.png'
             size: self.texture_size
-            size_hint: 0.1, 0.1
-            pos_hint: {"x":0.37, "top":0.247}
+            size_hint: 0.11, 0.11
+            pos_hint: {"x":0.368, "top":0.175}
 
         Image:
             source: 'RedTriangle.png'
             size: self.texture_size
-            size_hint: 0.1, 0.1
-            pos_hint: {"x":0.37, "top":0.127}
+            size_hint: 0.09, 0.09
+            pos_hint: {"x":0.378, "top":0.096}
             
 
 <DistanceWindow>:
@@ -419,15 +455,21 @@
         cols:1
 
         Label:
-            text: "Please get within 10 centimeters"
+            text: "Please get within"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.9}
+            pos_hint: {"x":0.105, "top":0.98}
             font_size: 40
             
         Label:
-            text: "of the sensor"
+            text: "10 centimeters of"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.8}
+            pos_hint: {"x":0.105, "top":0.92}
+            font_size: 40
+            
+        Label:
+            text: "the sensor"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.86}
             font_size: 40
             
         ProgressBar:
@@ -439,14 +481,14 @@
             canvas:
                 BorderImage:
                     border: (11, 11, 11, 11)
-                    pos: 80, 190
-                    size: 650, 100
+                    pos: 16, 350
+                    size: 450, 100
                     source: 'grey.png'
                     
                 BorderImage:
                     border: [int(min(self.width * (self.value / float(self.max)) if self.max else 0, 11))] * 4
-                    pos: 80, 235
-                    size: 650 * (self.value / float(self.max)) if self.max else 0, 11
+                    pos: 16, 395
+                    size: 450 * (self.value / float(self.max)) if self.max else 0, 11
                     source: 'green.png'
 
             
@@ -463,9 +505,15 @@
         cols:1
 
         Label:
-            text: "Measuring your temperature..."
+            text: "Measuring your"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.9}
+            pos_hint: {"x":0.105, "top":0.98}
+            font_size: 40
+            
+        Label:
+            text: "temperature..."
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.92}
             font_size: 40
             
         ProgressBar:
@@ -477,14 +525,14 @@
             canvas:
                 BorderImage:
                     border: (11, 11, 11, 11)
-                    pos: 80, 190
-                    size: 650, 100
+                    pos: 16, 350
+                    size: 450, 100
                     source: 'grey.png'
                     
                 BorderImage:
                     border: [int(min(self.width * (self.value / float(self.max)) if self.max else 0, 11))] * 4
-                    pos: 80, 235
-                    size: 650 * (self.value / float(self.max)) if self.max else 0, 11
+                    pos: 16, 395
+                    size: 450 * (self.value / float(self.max)) if self.max else 0, 11
                     source: 'green.png'
             
 
@@ -509,13 +557,13 @@
         Label:
             text: root.temperature_display
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.7}
+            pos_hint: {"x":0.105, "top":0.74}
             font_size: 40
             
         Label:
             text: "Please collect your label"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.5}
+            pos_hint: {"x":0.105, "top":0.62}
             font_size: 40
             
             
@@ -553,13 +601,19 @@
         Label:
             text: "Site access denied:"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":1}
+            pos_hint: {"x":0.105, "top":0.98}
             font_size: 40
             
         Label:
-            text: "Secondary screening is recommended"
+            text: "Secondary screening is"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.9}
+            pos_hint: {"x":0.105, "top":0.92}
+            font_size: 40
+            
+        Label:
+            text: "recommended"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.86}
             font_size: 40
             
 
@@ -578,13 +632,19 @@
         Label:
             text: "Printer is offline:"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":1}
+            pos_hint: {"x":0.105, "top":0.98}
             font_size: 40
             
         Label:
-            text: "Please contact the manufacturer"
+            text: "Please contact the"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.9}
+            pos_hint: {"x":0.105, "top":0.92}
+            font_size: 40
+            
+        Label:
+            text: "manufacturer"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.105, "top":0.86}
             font_size: 40
 
             
@@ -622,13 +682,13 @@
         canvas:
             BorderImage:
                 border: (11, 11, 11, 11)
-                pos: 245, 115
+                pos: 83, 275
                 size: 310, 105
                 source: 'grey.png'
                     
             BorderImage:
                 border: [int(min(self.width * (self.value / float(self.max)) if self.max else 0, 11))] * 4
-                pos: 245, 162
+                pos: 83, 322
                 size: 310 * (self.value / float(self.max)) if self.max else 0, 11
                 source: 'green.png'
 
