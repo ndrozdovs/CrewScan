@@ -53,7 +53,7 @@ class BeginWindow(Screen):
 class InfoWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'cough', 'begin', 'begin'), 1/20)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 1, 1), 1)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
         
     def on_pre_leave(self):
