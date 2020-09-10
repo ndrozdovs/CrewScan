@@ -7,9 +7,6 @@ fontPath = "/usr/share/fonts/truetype/freefont/FreeMono.ttf"
 mono_14 = ImageFont.truetype(fontPath, 14)
 mono_20 = ImageFont.truetype(fontPath, 20)
 result = subprocess.check_output("lsusb", shell=True)
-print(result)
-if "04f9:2042" in str(result):
-	print("oh baby")
  
 img = Image.new('RGB', (200, 100), color = (255, 255, 255))
 
@@ -24,4 +21,4 @@ d.text((150,88), "SetTek", fill=(0,0,0), font=mono_14)
  
 img.save('pil_text.png')
 
-#os.system("brother_ql -b pyusb -m QL-700 -p usb://0x04f9:0x2042 print -l 62 pil_text.png")
+os.system("brother_ql -b pyusb -m QL-700 -p usb://0x04f9:0x2042 print -l 62 pil_text.png")

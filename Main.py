@@ -28,9 +28,9 @@ DIST_COUNTER = 0
 TEMP_COUNTER = 0
 PROGRESS_COUNTER = 0
 TIMEOUT_COUNTER = 0
-RIGHT_PEDAL = 16
+RIGHT_PEDAL = 20
 LEFT_PEDAL = 21
-MIDDLE_PEDAL = 20
+MIDDLE_PEDAL = 16
 POP_ACTIVE = 0
 PRINTER_FOUND = 1
 
@@ -155,11 +155,12 @@ class DistanceWindow(Screen):
     def measure_dist(self, dt):
         global DIST_COUNTER
         global PROGRESS_COUNTER
+        global MIDDLE_PEDAL
         
-        if GPIO.input(MIDDLE_PEDAL) == 0:
-            while (GPIO.input(MIDDLE_PEDAL) == 0):
-                pass
-            self.manager.current = 'begin'
+        #if GPIO.input(MIDDLE_PEDAL) == 0:
+           # while (GPIO.input(MIDDLE_PEDAL) == 0):
+                #pass
+            #self.manager.current = 'begin'
         
         if ReadDistance(17) < 10:
             DIST_COUNTER = DIST_COUNTER + 1
@@ -195,10 +196,10 @@ class TemperatureWindow(Screen):
         global PROGRESS_COUNTER
         global MIDDLE_PEDAL
         
-        if GPIO.input(MIDDLE_PEDAL) == 0:
-            while (GPIO.input(MIDDLE_PEDAL) == 0):
-                pass
-            self.manager.current = 'begin'
+        #if GPIO.input(MIDDLE_PEDAL) == 0:
+            #while (GPIO.input(MIDDLE_PEDAL) == 0):
+                #pass
+            #self.manager.current = 'begin'
 
         distance = ReadDistance(17)
         if distance < 10:
@@ -306,10 +307,10 @@ def answer_input(instance, right, left, middle, dt):
             while (GPIO.input(LEFT_PEDAL) == 0):
                 pass
             instance.manager.current = left
-        elif GPIO.input(MIDDLE_PEDAL) == 0:
-            while (GPIO.input(MIDDLE_PEDAL) == 0):
-                pass
-            instance.manager.current = middle
+        #elif GPIO.input(MIDDLE_PEDAL) == 0:
+            #while (GPIO.input(MIDDLE_PEDAL) == 0):
+                #pass
+            #instance.manager.current = middle
     elif POP_ACTIVE == 1:
         if GPIO.input(RIGHT_PEDAL) == 0:
             while (GPIO.input(RIGHT_PEDAL) == 0):
