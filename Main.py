@@ -419,7 +419,7 @@ def check_errors(instance, dt):
             elif loop == 4:
                 ERROR_CODE |= dist_sensor
     except:
-        print("oops")
+        pass
     
     if "04f9:2042" not in str(subprocess.check_output("lsusb", shell=True)):
         ERROR_CODE |= printer          
