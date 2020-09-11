@@ -617,7 +617,7 @@
             font_size: 40
             
 
-<PrinterWindow>:
+<ErrorWindow>:
     name: "printer"
 
     canvas.before:
@@ -630,9 +630,15 @@
         cols:1
 
         Label:
-            text: "Printer is offline:"
+            text: "I/O Error:"
             size_hint: 0.8, 0.2
-            pos_hint: {"x":0.105, "top":0.98}
+            pos_hint: {"x":0, "top":0.98}
+            font_size: 40
+            
+        Label:
+            text: root.error_display
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.295, "top":0.98}
             font_size: 40
             
         Label:

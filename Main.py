@@ -32,7 +32,8 @@ RIGHT_PEDAL = 20
 LEFT_PEDAL = 21
 MIDDLE_PEDAL = 16
 POP_ACTIVE = 0
-PRINTER_FOUND = 1
+ERROR_CODE = 0
+ERROR_FOUND = 0
 
 
 # Window to start the screening
@@ -40,105 +41,105 @@ class BeginWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'info', 'begin', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 0, 0), 1)
-        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
+        self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
-        self.printer.cancel()
+        self.errors.cancel()
  
 # Window to show how to answer to prompts
 class InfoWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'cough', 'begin', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
-        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
+        self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
-        self.printer.cancel()
+        self.errors.cancel()
 
 # Window to check for new cough or fever symptoms
 class CoughWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'travel', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
-        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
+        self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
-        self.printer.cancel()
+        self.errors.cancel()
 
 # Window to check if person traveled outside of Canada
 class TravelWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'fever', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
-        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
+        self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
-        self.printer.cancel()
+        self.errors.cancel()
 
 # Window to check if person has a fever    
 class FeverWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'contact', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
-        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
+        self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
-        self.printer.cancel()
+        self.errors.cancel()
  
 # Window to check if person had to contact with an individual with Covid or Covid like symptoms
 class ContactWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'equipment', 'distance', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
-        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
+        self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
-        self.printer.cancel()
+        self.errors.cancel()
 
 # Window to check if person was wearing protective equipment if they were exsposed to an individual with Covid
 class EquipmentWindow(Screen):        
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'distance', 'fail', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
-        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
+        self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
-        self.printer.cancel()
+        self.errors.cancel()
 
 # Window to prompt the person to get within temperature measuring distance
 class DistanceWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(self.measure_dist, 1/30)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
-        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
+        self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
         
     def on_pre_leave(self):
         global DIST_COUNTER
@@ -150,16 +151,21 @@ class DistanceWindow(Screen):
         self.ids.progress.value = PROGRESS_COUNTER
         self.event.cancel()
         self.timeout.cancel()
-        self.printer.cancel()
+        self.errors.cancel()
 
     def measure_dist(self, dt):
         global DIST_COUNTER
         global PROGRESS_COUNTER
         global MIDDLE_PEDAL
+        global ERROR_CODE
         
         #if GPIO.input(MIDDLE_PEDAL) == 0:
-           # while (GPIO.input(MIDDLE_PEDAL) == 0):
-                #pass
+            #start_time = time.time()
+            #while (GPIO.input(MIDDLE_PEDAL) == 0):
+                #if (time.time() - start_time) > 10:
+                    #ERROR_CODE |= 16
+                    #instance.manager.current = 'error'
+                    #return
             #self.manager.current = 'begin'
         
         if ReadDistance(17) < 10:
@@ -178,7 +184,7 @@ class TemperatureWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(self.measure_temp, 1/30)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
-        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
+        self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
         
     def on_pre_leave(self):
         global PROGRESS_COUNTER
@@ -188,17 +194,22 @@ class TemperatureWindow(Screen):
         self.ids.progress.value = PROGRESS_COUNTER
         self.event.cancel()
         self.timeout.cancel()
-        self.printer.cancel()
+        self.errors.cancel()
         
     def measure_temp(self, dt):
         global TEMPERATURE
         global TEMP_COUNTER
         global PROGRESS_COUNTER
         global MIDDLE_PEDAL
+        global ERROR_CODE
         
         #if GPIO.input(MIDDLE_PEDAL) == 0:
+            #start_time = time.time()
             #while (GPIO.input(MIDDLE_PEDAL) == 0):
-                #pass
+                #if (time.time() - start_time) > 10:
+                    #ERROR_CODE |= 16
+                    #instance.manager.current = 'error'
+                    #return
             #self.manager.current = 'begin'
 
         distance = ReadDistance(17)
@@ -231,13 +242,26 @@ class GoodTempWindow(Screen):
         global TEMP_COUNTER
         self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'distance', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 10, 0), 1)
-        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
+        self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
         self.temperature_display = str(round(TEMPERATURE / TEMP_COUNTER, 1))
         TEMPERATURE = 0
         TEMP_COUNTER = 0
         
     def on_enter(self):
-        pass
+        # Create a png image file with todays date, print it if access to site was granted    
+        fontPath = "/usr/share/fonts/truetype/freefont/FreeMono.ttf"
+        mono_14 = ImageFont.truetype(fontPath, 14)
+        mono_20 = ImageFont.truetype(fontPath, 20)
+  
+        img = Image.new('RGB', (200, 100), color = (255, 255, 255))
+        dt_string = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+        d = ImageDraw.Draw(img)
+        d.text((25,0), "Visitor Pass", fill=(0,0,0), font=mono_20)
+        d.text((12,5), "______________", fill=(0,0,0), font=mono_20)
+        d.text((5,30), "Access to Site Granted:", fill=(0,0,0), font=mono_14)
+        d.text((20,50), str(dt_string), fill=(0,0,0), font=mono_14)
+        d.text((150,88), "SetTek", fill=(0,0,0), font=mono_14) 
+        img.save('pil_text.png')
         os.system("brother_ql -b pyusb -m QL-700 -p usb://0x04f9:0x2042 print -l 62 pil_text.png")
         
     def on_pre_leave(self):
@@ -245,41 +269,43 @@ class GoodTempWindow(Screen):
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
-        self.printer.cancel()
+        self.errors.cancel()
 
 # Window if the persons temperature was not good    
 class BadTempWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'fail', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 10, 0), 1)
-        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
+        self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
-        self.printer.cancel()
+        self.errors.cancel()
     
 class FailWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'fail', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 10, 0), 1)
-        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
+        self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
         TIMEOUT_COUNTER = 0
         self.event.cancel()
         self.timeout.cancel()
-        self.printer.cancel()
+        self.errors.cancel()
         
-class PrinterWindow(Screen):
+class ErrorWindow(Screen):
+    error_display = StringProperty(str('{0:05b}'.format(ERROR_CODE)))
+    
     def on_pre_enter(self):
-        self.printer = Clock.schedule_interval(partial(check_printer, self), 1)
+        self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
         
     def on_pre_leave(self):
-        self.printer.cancel()
+        self.errors.cancel()
         
 # Window Manager
 class WindowManager(ScreenManager):
@@ -296,20 +322,31 @@ def answer_input(instance, right, left, middle, dt):
     global MIDDLE_PEDAL
     global TIMEOUT_COUNTER
     global POP_ACTIVE
-    global PRINTER_FOUND
+    global ERROR_FOUND
+    global ERROR_CODE
     
-    if TIMEOUT_COUNTER > 0 and POP_ACTIVE == 0 and PRINTER_FOUND == 1:
+    if TIMEOUT_COUNTER > 0 and POP_ACTIVE == 0 and ERROR_FOUND == 0:
+        start_time = time.time()
         if GPIO.input(RIGHT_PEDAL) == 0:
             while (GPIO.input(RIGHT_PEDAL) == 0):
-                pass
+                if (time.time() - start_time) > 10:
+                    ERROR_CODE |= 16
+                    instance.manager.current = 'error'
+                    return
             instance.manager.current = right
         elif GPIO.input(LEFT_PEDAL) == 0:
             while (GPIO.input(LEFT_PEDAL) == 0):
-                pass
+                if (time.time() - start_time) > 10:
+                    ERROR_CODE |= 16
+                    instance.manager.current = 'error'
+                    return
             instance.manager.current = left
         #elif GPIO.input(MIDDLE_PEDAL) == 0:
             #while (GPIO.input(MIDDLE_PEDAL) == 0):
-                #pass
+                #if (time.time() - start_time) > 10:
+                    #ERROR_CODE |= 16
+                    #instance.manager.current = 'error'
+                    #return
             #instance.manager.current = middle
     elif POP_ACTIVE == 1:
         if GPIO.input(RIGHT_PEDAL) == 0:
@@ -323,10 +360,10 @@ def answer_input(instance, right, left, middle, dt):
 def timeout_check(instance, timeout_val, activate_pop, dt):
     global TIMEOUT_COUNTER
     global POP_ACTIVE
-    global PRINTER_FOUND
+    global ERROR_FOUND
     TIMEOUT_COUNTER = TIMEOUT_COUNTER + 1
     
-    if instance.manager.current is not 'begin' and PRINTER_FOUND == 1:
+    if instance.manager.current is not 'begin' and ERROR_FOUND == 0:
         if activate_pop == 1:
             if TIMEOUT_COUNTER is timeout_val:
                 timeout_pop(instance)
@@ -337,9 +374,8 @@ def timeout_check(instance, timeout_val, activate_pop, dt):
                 instance.manager.current = 'begin'
                 instance.pop.dismiss()
                 POP_ACTIVE = 0
-        else:
-            if TIMEOUT_COUNTER is timeout_val:
-                instance.manager.current = 'begin'
+        elif TIMEOUT_COUNTER is timeout_val:
+            instance.manager.current = 'begin'
 
 
 def timeout_pop(instance):
@@ -348,23 +384,67 @@ def timeout_pop(instance):
     instance.pop.open()
     
     
-def check_printer(instance, dt):
+def check_errors(instance, dt):
+    global RIGHT_PEDAL
+    global LEFT_PEDAL
+    global MIDDLE_PEDAL
     global POP_ACTIVE
-    global PRINTER_FOUND
+    global ERROR_CODE
+    global ERROR_FOUND
+    temp_sensor = 1
+    adc = 2
+    dist_sensor = 4
+    printer = 8
+    pedals = 16
+    
+    try:
+        check_i2c = busio.I2C(board.SCL, board.SDA)
+        check_ads = ADS.ADS1115(check_i2c) #Create ADC object
+        check_chan = AnalogIn(check_ads, ADS.P0) #Create analog input channel
+        if (ERROR_CODE & adc) == adc:
+            ERROR_CODE ^= adc
+        if check_chan.voltage < 1:
+            ERROR_CODE |= temp_sensor
+        elif (ERROR_CODE & temp_sensor) == temp_sensor:
+            ERROR_CODE ^= temp_sensor
+    except:
+        ERROR_CODE |= adc
+    
+    try:
+        for loop in range(5):
+            if ReadDistance(17) != 0:
+                if (ERROR_CODE & dist_sensor) == dist_sensor:
+                    ERROR_CODE ^= dist_sensor
+                break
+            elif loop == 4:
+                ERROR_CODE |= dist_sensor
+    except:
+        print("oops")
     
     if "04f9:2042" not in str(subprocess.check_output("lsusb", shell=True)):
-        PRINTER_FOUND = 0
-        instance.manager.current = 'printer'
+        ERROR_CODE |= printer          
+    elif (ERROR_CODE & printer) == printer:
+        ERROR_CODE ^= printer
+        
+    if (ERROR_CODE & pedals) == pedals:
+        if GPIO.input(RIGHT_PEDAL) == 1 and GPIO.input(LEFT_PEDAL) == 1 and GPIO.input(MIDDLE_PEDAL) == 1:
+            ERROR_CODE ^= pedals        
+        
+    if ERROR_CODE != 0:
+        ERROR_FOUND = 1
+        instance.manager.current = 'error'
         if POP_ACTIVE == 1:
             instance.pop.dismiss()
             POP_ACTIVE = 0
-            TIMEOUT_COUNTER = 0            
-    else:
-        if PRINTER_FOUND == 0:
-            instance.manager.current = 'begin'
-            PRINTER_FOUND = 1
+            TIMEOUT_COUNTER = 0 
+    elif ERROR_CODE == 0 and ERROR_FOUND == 1:
+        instance.manager.current = 'begin'
+        ERROR_FOUND = 0
+        
+    if instance.manager.current == 'error':
+        instance.error_display = str('{0:05b}'.format(ERROR_CODE))
+        
     
-
 # Measure distance from sensor and return the value
 def ReadDistance(pin):
     counter = 0
@@ -397,15 +477,18 @@ def ReadDistance(pin):
     return distance
 
 i2c = busio.I2C(board.SCL, board.SDA)
-ads = ADS.ADS1115(i2c)       #Create ADC object
-chan = AnalogIn(ads, ADS.P0) #Create analog input channel
+try:
+    ads = ADS.ADS1115(i2c)       #Create ADC object
+    chan = AnalogIn(ads, ADS.P0) #Create analog input channel
+except:
+    pass
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(RIGHT_PEDAL,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 GPIO.setup(LEFT_PEDAL,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 GPIO.setup(MIDDLE_PEDAL,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 
-#Window.size = (480, 800)
+Window.size = (480, 800)
 
 kv = Builder.load_file("my.kv")
 
@@ -413,24 +496,9 @@ sm = WindowManager(transition=NoTransition())
 screens = [BeginWindow(name="begin"), InfoWindow(name="info"), CoughWindow(name="cough"), TravelWindow(name="travel"),
            FeverWindow(name="fever"), ContactWindow(name="contact"), EquipmentWindow(name="equipment"),
            DistanceWindow(name="distance"), TemperatureWindow(name="temperature"), GoodTempWindow(name="good_temp"),
-           BadTempWindow(name="bad_temp"), FailWindow(name="fail"), PrinterWindow(name="printer")]
+           BadTempWindow(name="bad_temp"), FailWindow(name="fail"), ErrorWindow(name="error")]
 for screen in screens:
     sm.add_widget(screen)
-
-# Create a png image file with todays date, print it if access to site was granted    
-fontPath = "/usr/share/fonts/truetype/freefont/FreeMono.ttf"
-mono_14 = ImageFont.truetype(fontPath, 14)
-mono_20 = ImageFont.truetype(fontPath, 20)
-  
-img = Image.new('RGB', (200, 100), color = (255, 255, 255))
-dt_string = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
-d = ImageDraw.Draw(img)
-d.text((25,0), "Visitor Pass", fill=(0,0,0), font=mono_20)
-d.text((12,5), "______________", fill=(0,0,0), font=mono_20)
-d.text((5,30), "Access to Site Granted:", fill=(0,0,0), font=mono_14)
-d.text((20,50), str(dt_string), fill=(0,0,0), font=mono_14)
-d.text((150,88), "SetTek", fill=(0,0,0), font=mono_14) 
-img.save('pil_text.png')
 
 
 class MyApp(App):
@@ -439,5 +507,5 @@ class MyApp(App):
 
 
 if __name__ == "__main__":
-    Window.fullscreen = 'auto'
+    #Window.fullscreen = 'auto'
     MyApp().run()
