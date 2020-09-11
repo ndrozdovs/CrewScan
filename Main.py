@@ -446,15 +446,17 @@ def check_errors(instance, dt):
     except:
         ERROR_CODE |= adc                         # Make adc bit high if there was an exception during adc setup
     
-    # Read the distance 5 times, if all are 0, raise an error. The try is needed to handle excpetions for when distance sensor gets plugged and unplugged
+    # Read the distance 5 times, if >= 3, raise an error. The try is needed to handle excpetions for when distance sensor gets plugged and unplugged
     try:
+        counter = 0
         for loop in range(5):
             if ReadDistance(17) != 0:
                 if (ERROR_CODE & dist_sensor) == dist_sensor:
                     ERROR_CODE ^= dist_sensor
-                break
+                counter += 1
             elif loop == 4:
-                ERROR_CODE |= dist_sensor
+                if counter < 2:
+                    ERROR_CODE |= dist_sensor
     except:
         pass
     
