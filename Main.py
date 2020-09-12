@@ -26,14 +26,14 @@ import RPi.GPIO as GPIO
 TEMPERATURE = 0       # Global variable to track temperature from the sensor
 DIST_COUNTER = 0      # Global variable to track distance from the snesor
 TEMP_COUNTER = 0      # Global variable to track the amount of times we measured the temperature
-PROGRESS_COUNTER = 0  # Global varibale to track and output progress of the progress bar
-TIMEOUT_COUNTER = 0   # Global varibale to track the timeout of each screen
-RIGHT_PEDAL = 20      # Global varibale for the right pedal
-LEFT_PEDAL = 21       # Global varibale for the left pedal
-MIDDLE_PEDAL = 16     # Global varibale for the middle pedal
+PROGRESS_COUNTER = 0  # Global variable to track and output progress of the progress bar
+TIMEOUT_COUNTER = 0   # Global variable to track the timeout of each screen
+RIGHT_PEDAL = 16      # Global variable for the right pedal
+LEFT_PEDAL = 21       # Global variable for the left pedal
+MIDDLE_PEDAL = 20     # Global variable for the middle pedal
 POP_ACTIVE = 0        # Global variable to track if we have a pop up active
 ERROR_CODE = 0        # Global variable to track the Error COde to be displayed
-ERROR_FOUND = 0       # Global varibale to track if we have any errors
+ERROR_FOUND = 0       # Global variable to track if we have any errors
 
 
 # Window to start the screening
@@ -224,10 +224,11 @@ class TemperatureWindow(Screen):
         # If person is within 10 cm from the sensor
         if distance < 10:
             # Sometimes the sensor times out and reads 0, this is not an issue so just skip this iteration
-            if distance is not 0:
-                voltage = chan.voltage + 0.06                                                                             # Add voltagr for proper calibaration
-                test_temperature = 2705.06 + ((-7670.457 - 2705.061) / (1 + (voltage / (3.135016*(10**-8)))**0.0595245))  # Convert voltage to degrees Celsius
-                # If temperature is valid, count it a sone of the data points
+            if distance > 3:
+                compensation = 1.72255 - (-0.0028336242611106542*distance + 1.739147043467168)                            # Compensation for distance from the sensor
+                voltage = chan.voltage + 0.064 + compensation                                                             # Add voltage for proper calibaration
+                test_temperature = 2705.06 + ((-7670.457 - 2705.061) / (1 + (voltage / (3.135016*(10**-8)))**0.0595245))  # Convert voltage to degrees Celsius            
+                # If temperature is valid, count it as one of the data points
                 if test_temperature > 20 and test_temperature < 45:
                     TEMPERATURE = TEMPERATURE + test_temperature
                     TEMP_COUNTER = TEMP_COUNTER + 1
@@ -365,6 +366,7 @@ def answer_input(instance, right, left, middle, dt):
             instance.manager.current = middle
     # If pop up is active on the screen
     elif POP_ACTIVE == 1:
+        start_time = time.time() 
         # Use right pedal as a dismiss for the pop up
         if GPIO.input(RIGHT_PEDAL) == 0:
             while (GPIO.input(RIGHT_PEDAL) == 0):

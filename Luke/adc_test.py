@@ -22,7 +22,7 @@ print("I'm out")
 
 while True:
     # Rough calc for temperature & print values
-    voltage = chan.voltage + 0.06
+    voltage = chan.voltage + 0.064
     temp = 2705.06 + ((-7670.457 - 2705.061) / (1 + (voltage / (3.135016*(10**-8)))**0.0595245))
     print(round(voltage, 5), round(temp,3))
     
