@@ -59,7 +59,7 @@ class BeginWindow(Screen):
 class InfoWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'cough', 'begin', 'begin'), 1/20)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 1, 1), 1)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 5, 1), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
         disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4, self.string_5, self.string_6,
                         self.image_1, self.image_2, self.image_3,
