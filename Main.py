@@ -9,22 +9,23 @@ from kivy.uix.progressbar import ProgressBar
 from kivy.properties import StringProperty, ObjectProperty
 from kivy.clock import Clock
 from kivy.core.window import Window
+from kivy.animation import Animation
 from functools import partial
 from adafruit_ads1x15.analog_in import AnalogIn
 from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime
+import adafruit_ads1x15.ads1115 as ADS
+import RPi.GPIO as GPIO
 import os
 import subprocess
-import adafruit_ads1x15.ads1115 as ADS
 import keyboard
 import board
 import busio
 import time
-import RPi.GPIO as GPIO
 
 
 TEMPERATURE = 0       # Global variable to track temperature from the sensor
-DIST_COUNTER = 0      # Global variable to track distance from the snesor
+SAMPLE_COUNTER = 0    # Global variable to track amount of samples taken for distance and temperature
 TEMP_COUNTER = 0      # Global variable to track the amount of times we measured the temperature
 PROGRESS_COUNTER = 0  # Global variable to track and output progress of the progress bar
 TIMEOUT_COUNTER = 0   # Global variable to track the timeout of each screen
@@ -58,6 +59,11 @@ class InfoWindow(Screen):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'cough', 'begin', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
+        self.cont.opacity = 0  
+        self.cancel.opacity = 0 
+        self.circle.opacity = 0 
+        self.triangle.opacity = 0  
+        Clock.schedule_once(self.animate, 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -65,13 +71,38 @@ class InfoWindow(Screen):
         self.event.cancel()
         self.timeout.cancel()
         self.errors.cancel()
+        
+    def animate(self, dt):    
+        anim = Animation(opacity=1, duration=0.5)
+        anim.start(self.cont)
+        anim.start(self.cancel)
+        anim.start(self.circle)
+        anim.start(self.triangle)
 
 # Window to check for new cough or fever symptoms
 class CoughWindow(Screen):
     def on_pre_enter(self):
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'fever', 'begin'), 1/20)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
+        self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
+        disable_opacity(self)
+        Clock.schedule_once(partial(animate, self), 1)
+        
+    def on_pre_leave(self):
+        global TIMEOUT_COUNTER
+        TIMEOUT_COUNTER = 0
+        self.event.cancel()
+        self.timeout.cancel()
+        self.errors.cancel()
+        
+# Window to check if person has a fever    
+class FeverWindow(Screen):
+    def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'travel', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
+        disable_opacity(self)
+        Clock.schedule_once(partial(animate, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -83,23 +114,11 @@ class CoughWindow(Screen):
 # Window to check if person traveled outside of Canada
 class TravelWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'fever', 'begin'), 1/20)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
-        self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
-        
-    def on_pre_leave(self):
-        global TIMEOUT_COUNTER
-        TIMEOUT_COUNTER = 0
-        self.event.cancel()
-        self.timeout.cancel()
-        self.errors.cancel()
-
-# Window to check if person has a fever    
-class FeverWindow(Screen):
-    def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'contact', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
+        disable_opacity(self)
+        Clock.schedule_once(partial(animate, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -111,9 +130,11 @@ class FeverWindow(Screen):
 # Window to check if person had contact with an individual with Covid or Covid like symptoms
 class ContactWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'equipment', 'distance', 'begin'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'guide', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
+        disable_opacity(self)
+        Clock.schedule_once(partial(animate, self), 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -122,12 +143,17 @@ class ContactWindow(Screen):
         self.timeout.cancel()
         self.errors.cancel()
 
-# Window to check if person was wearing protective equipment if they were exsposed to an individual with Covid
-class EquipmentWindow(Screen):        
+# Window to show user the guideline son how to use the temperature sensor        
+class GuidelinesWindow(Screen):
     def on_pre_enter(self):
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'distance', 'fail', 'begin'), 1/20)
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'temperature', 'guide', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
+        self.cont.opacity = 0  
+        self.restart.opacity = 0 
+        self.circle.opacity = 0 
+        self.square.opacity = 0 
+        Clock.schedule_once(self.animate, 1)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -135,58 +161,21 @@ class EquipmentWindow(Screen):
         self.event.cancel()
         self.timeout.cancel()
         self.errors.cancel()
-
-# Window to prompt the person to get within temperature measuring distance
-class DistanceWindow(Screen):
-    def on_pre_enter(self):
-        self.event = Clock.schedule_interval(self.measure_dist, 1/30)  # Create event to measure distance, 30 times per second
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
-        self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
         
-    def on_pre_leave(self):
-        global DIST_COUNTER
-        global PROGRESS_COUNTER
-        global TIMEOUT_COUNTER
-        DIST_COUNTER = 0
-        PROGRESS_COUNTER = 0
-        TIMEOUT_COUNTER = 0
-        self.ids.progress.value = PROGRESS_COUNTER  # Update the progress bar counter to 0 when leaving the screen
-        self.event.cancel()
-        self.timeout.cancel()
-        self.errors.cancel()
-
-    # Measure the distance away from the sensor, and make sure the person is within range for 1 second
-    def measure_dist(self, dt):
-        global DIST_COUNTER
-        global PROGRESS_COUNTER
-        global MIDDLE_PEDAL
-        global ERROR_CODE
-        
-        # Reset the screening proccess if middle pedal was pressed
-        if GPIO.input(MIDDLE_PEDAL) == 0:
-            start_time = time.time()
-            while (GPIO.input(MIDDLE_PEDAL) == 0):
-                if (time.time() - start_time) > 10:
-                    ERROR_CODE |= 16
-                    instance.manager.current = 'error'
-                    return
-            self.manager.current = 'begin'
-        
-        # If distance read from the sensor is less than 10 centimeters
-        if ReadDistance(17) < 10:
-            DIST_COUNTER = DIST_COUNTER + 1
-            PROGRESS_COUNTER = PROGRESS_COUNTER + 3.33  # Increment by 3.33 because progress bar is up to 100 and we execute this for 1 second
-            self.ids.progress.value = PROGRESS_COUNTER  # Update the progress bar
-            if DIST_COUNTER is 30:
-                self.manager.current = "temperature"    # Change screen to measure temperature if we have enough samples of distance
-        # If distance is less than 10 centimeters -> reset variables and progress bar, and start measuring again
-        else:
-            DIST_COUNTER = 0
-            PROGRESS_COUNTER = 0
-            self.ids.progress.value = PROGRESS_COUNTER
+    def animate(self, dt):    
+        anim = Animation(opacity=1, duration=0.5)
+        anim.start(self.cont)
+        anim.start(self.restart)
+        anim.start(self.circle)
+        anim.start(self.square)
 
 # Window to measure persons temperature
 class TemperatureWindow(Screen):
+    string_1 = StringProperty("Move closer!")  # Create a string object that could be updated and displayed on the Kivy screen
+    string_2 = StringProperty("Please get within 7")
+    string_3 = StringProperty("centimeters from the")
+    string_4 = StringProperty("end of the device")
+    
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(self.measure_temp, 1/30)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
@@ -194,21 +183,41 @@ class TemperatureWindow(Screen):
         
     def on_pre_leave(self):
         global PROGRESS_COUNTER
+        global DIST_COUNTER
         global TIMEOUT_COUNTER
         PROGRESS_COUNTER = 0
-        TIMEOUT_COUNTER = 0
-        self.ids.progress.value = PROGRESS_COUNTER
+        self.ids.progress.value = PROGRESS_COUNTER # Update the progress bar counter to 0 when leaving the screen
         self.event.cancel()
         self.timeout.cancel()
         self.errors.cancel()
 
     # Measure the persons temperature for 3 seconds and average it over time      
     def measure_temp(self, dt):
+        global SAMPLE_COUNTER
+        global DIST_COUNTER
         global TEMPERATURE
         global TEMP_COUNTER
         global PROGRESS_COUNTER
         global MIDDLE_PEDAL
         global ERROR_CODE
+        global POP_ACTIVE
+        global TIMEOUT_COUNTER
+        
+        if POP_ACTIVE == 1:
+            start_time = time.time() 
+            # Use right pedal as a dismiss for the pop up
+            if GPIO.input(RIGHT_PEDAL) == 0:
+                while (GPIO.input(RIGHT_PEDAL) == 0):
+                    if (time.time() - start_time) > 10:
+                        ERROR_CODE |= 16
+                        self.manager.current = 'error'
+                        self.pop.dismiss()
+                        POP_ACTIVE = 0
+                        TIMEOUT_COUNTER = 0
+                        return 
+                self.pop.dismiss()
+                POP_ACTIVE = 0
+                TIMEOUT_COUNTER = 0
         
         # Reset the screening proccess if middle pedal was pressed
         if GPIO.input(MIDDLE_PEDAL) == 0:
@@ -216,47 +225,60 @@ class TemperatureWindow(Screen):
             while (GPIO.input(MIDDLE_PEDAL) == 0):
                 if (time.time() - start_time) > 10:
                     ERROR_CODE |= 16
-                    instance.manager.current = 'error'
+                    self.manager.current = 'error'
                     return
             self.manager.current = 'begin'
-
-        distance = ReadDistance(17)
-        # If person is within 10 cm from the sensor
-        if distance < 10:
-            # Sometimes the sensor times out and reads 0, this is not an issue so just skip this iteration
+        
+        distance = ReadDistance(17)    
+        # If distance read from the sensor is less than 10 centimeters
+        if distance < 10 and SAMPLE_COUNTER < 30:
+            self.string_1 = "Please stay still!"
+            self.string_2 = "Measuring your"
+            self.string_3 = "temperature"
+            self.string_4 = ""
+            SAMPLE_COUNTER += 1
+            PROGRESS_COUNTER += 0.8333  # Increment by 3.33 because progress bar is up to 100 and we execute this for 1 second
+            self.ids.progress.value = PROGRESS_COUNTER  # Update the progress bar
+        elif distance < 10 and SAMPLE_COUNTER >= 30:
             if distance > 3:
-                compensation = 1.72255 - (-0.0028336242611106542*distance + 1.739147043467168)                            # Compensation for distance from the sensor
-                voltage = chan.voltage + 0.064 + compensation                                                             # Add voltage for proper calibaration
-                test_temperature = 2705.06 + ((-7670.457 - 2705.061) / (1 + (voltage / (3.135016*(10**-8)))**0.0595245))  # Convert voltage to degrees Celsius            
+                voltage = chan.voltage + 0.061                                                           # Add voltage for proper calibaration
+                test_temperature = (2705.06 + ((-7670.457 - 2705.061) / (1 + (voltage / (3.135016*(10**-8)))**0.0595245))) + (0.1*(distance - 4.5))  # Convert voltage to degrees Celsius            
                 # If temperature is valid, count it as one of the data points
                 if test_temperature > 20 and test_temperature < 45:
-                    TEMPERATURE = TEMPERATURE + test_temperature
-                    TEMP_COUNTER = TEMP_COUNTER + 1
-                    PROGRESS_COUNTER = PROGRESS_COUNTER + 1.111
+                    TEMPERATURE += test_temperature
+                    SAMPLE_COUNTER += 1
+                    PROGRESS_COUNTER += 0.8333
                     self.ids.progress.value = PROGRESS_COUNTER
-                    if TEMP_COUNTER is 90:
-                        if (TEMPERATURE / TEMP_COUNTER) < 38:
+                    if SAMPLE_COUNTER is 120:
+                        SAMPLE_COUNTER -= 30
+                        if (TEMPERATURE / SAMPLE_COUNTER) <= 38:
                             self.manager.current = "good_temp"                                                            # If temperature is below 38 degrees, go to good temperature window and print the pass
                         else:
                             self.manager.current = "fail"                                                                 # If temperature is above 38 degrees, go to fail screen
+        # If distance is less than 10 centimeters -> reset variables and progress bar, and start measuring again
         else:
+            self.string_1 = "Move closer!"
+            self.string_2 = "Please get within 7"
+            self.string_3 = "centimeters from the"
+            self.string_4 = "end of the device"
+            SAMPLE_COUNTER = 0
             TEMPERATURE = 0
-            TEMP_COUNTER = 0
-            self.manager.current = "distance"
-        
+            PROGRESS_COUNTER = 0
+            self.ids.progress.value = PROGRESS_COUNTER
+
 # Window if the persons temperature was good
 class GoodTempWindow(Screen):
-    temperature_display = StringProperty("")  # Create a string object that could be updated and dispalyed on the Kivy screen
+    temperature_display = StringProperty("")  # Create a string object that could be updated and displayed on the Kivy screen
     
     def on_pre_enter(self):
         global TEMPERATURE
-        global TEMP_COUNTER
-        self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'distance', 'begin'), 1/20)
+        global SAMPLE_COUNTER
+        self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'begin', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 10, 0), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
-        self.temperature_display = str(round(TEMPERATURE / TEMP_COUNTER, 1))  # Varibale for displaying the temperature on the screen
+        self.temperature_display = str(round(TEMPERATURE / SAMPLE_COUNTER, 1))  # Varibale for displaying the temperature on the screen
         TEMPERATURE = 0
-        TEMP_COUNTER = 0
+        SAMPLE_COUNTER = 0
         
     def on_enter(self):
         # Create a png image file with todays date and time and then print it 
@@ -378,9 +400,29 @@ def answer_input(instance, right, left, middle, dt):
                     TIMEOUT_COUNTER = 0
                     return 
             instance.pop.dismiss()
+            instance.timeout.cancel()
             POP_ACTIVE = 0
             TIMEOUT_COUNTER = 0
-        
+            instance.timeout()
+
+
+def disable_opacity(self):
+    self.yes.opacity = 0  
+    self.restart.opacity = 0 
+    self.no.opacity = 0 
+    self.circle.opacity = 0 
+    self.square.opacity = 0 
+    self.triangle.opacity = 0 
+
+def animate(self, dt):     
+    anim = Animation(opacity=1, duration=0.5)
+    anim.start(self.yes)
+    anim.start(self.restart)
+    anim.start(self.no)
+    anim.start(self.circle)
+    anim.start(self.square)
+    anim.start(self.triangle)
+                
 
 # Function to check for timeout on each screen        
 def timeout_check(instance, timeout_val, activate_pop, dt):
@@ -449,18 +491,15 @@ def check_errors(instance, dt):
         ERROR_CODE |= adc                         # Make adc bit high if there was an exception during adc setup
     
     # Read the distance 5 times, if >= 3, raise an error. The try is needed to handle excpetions for when distance sensor gets plugged and unplugged
-    try:
-        counter = 0
-        for loop in range(5):
-            if ReadDistance(17) != 0:
-                if (ERROR_CODE & dist_sensor) == dist_sensor:
-                    ERROR_CODE ^= dist_sensor
-                counter += 1
-            elif loop == 4:
-                if counter < 2:
-                    ERROR_CODE |= dist_sensor
-    except:
-        pass
+    counter = 0
+    for loop in range(5):
+        if ReadDistance(17) != 0:
+            if (ERROR_CODE & dist_sensor) == dist_sensor:
+                ERROR_CODE ^= dist_sensor
+            counter += 1
+        elif loop == 4:
+            if counter < 2:
+                ERROR_CODE |= dist_sensor
     
     # Send a console command to check for available usb devices, if can't find the printer string, then raise an error
     if "04f9:2042" not in str(subprocess.check_output("lsusb", shell=True)):
@@ -493,34 +532,36 @@ def check_errors(instance, dt):
     
 # Measure distance from sensor and return the value
 def ReadDistance(pin):
-    counter = 0
-    GPIO.setup(pin, GPIO.OUT)
-    GPIO.output(pin, 0)
+    try:
+        counter = 0
+        GPIO.setup(pin, GPIO.OUT)
+        GPIO.output(pin, 0)
 
-    time.sleep(0.000002)
+        time.sleep(0.000002)
 
-    #send trigger signal
-    GPIO.output(pin, 1)
+        #send trigger signal
+        GPIO.output(pin, 1)
 
-    time.sleep(0.000005)
+        time.sleep(0.000005)
 
-    GPIO.output(pin, 0)
+        GPIO.output(pin, 0)
 
-    GPIO.setup(pin, GPIO.IN)
+        GPIO.setup(pin, GPIO.IN)
 
-    while GPIO.input(pin)==0:
-        starttime=time.time()
-        counter = counter + 1
-        if counter == 5000:
-            return 0
+        while GPIO.input(pin)==0:
+            starttime=time.time()
+            counter = counter + 1
+            if counter == 5000:
+                return 0
 
-    while GPIO.input(pin)==1:
-        endtime=time.time()
+        while GPIO.input(pin)==1:
+            endtime=time.time()
 
-    duration=endtime-starttime
-    distance=duration*34000/2  # Distance is defined as time/2 (there and back) * speed of sound 34000 cm/s 
-    return distance
-
+        duration=endtime-starttime
+        distance=duration*34000/2  # Distance is defined as time/2 (there and back) * speed of sound 34000 cm/s 
+        return distance
+    except:
+        return 0
 
 try:
     i2c = busio.I2C(board.SCL, board.SDA)
@@ -541,8 +582,8 @@ kv = Builder.load_file("my.kv")                            # Load .kv file for G
 # Setup the screen manager
 sm = WindowManager(transition=NoTransition())
 screens = [BeginWindow(name="begin"), InfoWindow(name="info"), CoughWindow(name="cough"), TravelWindow(name="travel"),
-           FeverWindow(name="fever"), ContactWindow(name="contact"), EquipmentWindow(name="equipment"),
-           DistanceWindow(name="distance"), TemperatureWindow(name="temperature"), GoodTempWindow(name="good_temp"),
+           FeverWindow(name="fever"), ContactWindow(name="contact"), GuidelinesWindow(name="guide"),
+           TemperatureWindow(name="temperature"), GoodTempWindow(name="good_temp"),
            BadTempWindow(name="bad_temp"), FailWindow(name="fail"), ErrorWindow(name="error")]
 for screen in screens:
     sm.add_widget(screen)

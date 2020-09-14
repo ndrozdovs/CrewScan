@@ -50,9 +50,9 @@ while counter > 0:
 		distance = 0
 	if distance < 8 and distance > 2.25:
 		if counter < 90:
-			compensation = 1.72255 - (-0.0028336242611106542*distance + 1.739147043467168)
-			voltage = chan.voltage + 0.064 + compensation
-			temp = 2705.06 + ((-7670.457 - 2705.061) / (1 + (voltage / (3.135016*(10**-8)))**0.0595245))
+			#compensation = 1.72255 - (-0.0028336242611106542*distance + 1.739147043467168)
+			voltage = chan.voltage + 0.061# + compensation
+			temp = (2705.06 + ((-7670.457 - 2705.061) / (1 + (voltage / (3.135016*(10**-8)))**0.0595245))) + (0.1*(distance - 4.5))
 			temperature += temp
 			time.sleep(.033)
 			samples += 1

@@ -54,8 +54,8 @@ while counter > 0:
 	if distance < 10 and distance > 3:
 		if counter < 500:
 			#compensation = 1.72255 - (-0.0028336242611106542*distance + 1.739147043467168)
-			voltage = chan.voltage + 0.064# + compensation
-			temp = 2705.06 + ((-7670.457 - 2705.061) / (1 + (voltage / (3.135016*(10**-8)))**0.0595245))
+			voltage = chan.voltage + 0.061# + compensation
+			temp = (2705.06 + ((-7670.457 - 2705.061) / (1 + (voltage / (3.135016*(10**-8)))**0.0595245))) + (0.1*(distance - 4.5))
 			a.append(distance)
 			b.append(temp)
 			print("Voltage: {} | Temperature: {} | Distance: {}".format(round(voltage, 5), round(temp, 3), round(distance,5)))
@@ -65,8 +65,7 @@ while counter > 0:
 x = numpy.array(a)
 y = numpy.array(b)
 m, b = numpy.polyfit(x, y, 1)	
-print(m)
-print(b)
+print("{}*distance + {}".format(m,b))
 plt.plot(x, y, 'o')
 plt.plot(x, m*x + b)
 plt.show()	
