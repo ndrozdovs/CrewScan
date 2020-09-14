@@ -1,6 +1,6 @@
 from kivy.app import App
 from kivy.lang import Builder
-from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
+from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition, FadeTransition, SwapTransition, WipeTransition, FallOutTransition, RiseInTransition, CardTransition
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.uix.floatlayout import FloatLayout 
@@ -33,7 +33,7 @@ RIGHT_PEDAL = 16      # Global variable for the right pedal
 LEFT_PEDAL = 21       # Global variable for the left pedal
 MIDDLE_PEDAL = 20     # Global variable for the middle pedal
 POP_ACTIVE = 0        # Global variable to track if we have a pop up active
-ERROR_CODE = 0        # Global variable to track the Error COde to be displayed
+ERROR_CODE = 0        # Global variable to track the Error Code to be displayed
 ERROR_FOUND = 0       # Global variable to track if we have any errors
 
 
@@ -44,6 +44,8 @@ class BeginWindow(Screen):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'info', 'begin', 'begin'), 1/20)  # Create event for pedal input, 20 times per second
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 0, 0), 1)                      # Create event for checking screen timeout, 1 time per second
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)                              # Create event for checking for errors, 1 time per second
+        disable_opacity(self.string_1, self.image_1)
+        Clock.schedule_once(partial(animate, self.string_1,self.image_1), timeout=0.5)
 
     # Execute before leaving the screen    
     def on_pre_leave(self):
@@ -57,13 +59,13 @@ class BeginWindow(Screen):
 class InfoWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'cough', 'begin', 'begin'), 1/20)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 1, 1), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
-        self.cont.opacity = 0  
-        self.cancel.opacity = 0 
-        self.circle.opacity = 0 
-        self.triangle.opacity = 0  
-        Clock.schedule_once(self.animate, 1)
+        disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4, self.string_5, self.string_6,
+                        self.image_1, self.image_2, self.image_3,
+                        self.cont, self.cancel, self.circle, self.triangle)
+        Clock.schedule_once(partial(animate, self.string_1, self.string_2, self.string_3, self.string_4, self.string_5, self.string_6, self.image_1, self.image_2, self.image_3), timeout=0.5)
+        Clock.schedule_once(partial(animate, self.cont, self.cancel, self.circle, self.triangle), timeout=1.3)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -71,13 +73,6 @@ class InfoWindow(Screen):
         self.event.cancel()
         self.timeout.cancel()
         self.errors.cancel()
-        
-    def animate(self, dt):    
-        anim = Animation(opacity=1, duration=0.5)
-        anim.start(self.cont)
-        anim.start(self.cancel)
-        anim.start(self.circle)
-        anim.start(self.triangle)
 
 # Window to check for new cough or fever symptoms
 class CoughWindow(Screen):
@@ -85,8 +80,10 @@ class CoughWindow(Screen):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'fever', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
-        disable_opacity(self)
-        Clock.schedule_once(partial(animate, self), 1)
+        disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4, self.string_5, self.string_6, self.string_7,
+                        self.yes, self.restart, self.no, self.circle, self.square, self.triangle)
+        Clock.schedule_once(partial(animate, self.string_1, self.string_2, self.string_3, self.string_4, self.string_5, self.string_6, self.string_7), timeout=0.5)
+        Clock.schedule_once(partial(animate, self.yes, self.restart, self.no, self.circle, self.square, self.triangle), timeout=1.3)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -101,8 +98,10 @@ class FeverWindow(Screen):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'travel', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
-        disable_opacity(self)
-        Clock.schedule_once(partial(animate, self), 1)
+        disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4,
+                        self.yes, self.restart, self.no, self.circle, self.square, self.triangle)
+        Clock.schedule_once(partial(animate, self.string_1, self.string_2, self.string_3, self.string_4), timeout=0.5)
+        Clock.schedule_once(partial(animate, self.yes, self.restart, self.no, self.circle, self.square, self.triangle), timeout=1.3)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -117,8 +116,10 @@ class TravelWindow(Screen):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'contact', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
-        disable_opacity(self)
-        Clock.schedule_once(partial(animate, self), 1)
+        disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4,
+                        self.yes, self.restart, self.no, self.circle, self.square, self.triangle)
+        Clock.schedule_once(partial(animate, self.string_1, self.string_2, self.string_3, self.string_4), timeout=0.5)
+        Clock.schedule_once(partial(animate, self.yes, self.restart, self.no, self.circle, self.square, self.triangle), timeout=1.3)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -133,8 +134,10 @@ class ContactWindow(Screen):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'fail', 'guide', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
-        disable_opacity(self)
-        Clock.schedule_once(partial(animate, self), 1)
+        disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4,
+                        self.yes, self.restart, self.no, self.circle, self.square, self.triangle)
+        Clock.schedule_once(partial(animate, self.string_1, self.string_2, self.string_3, self.string_4), timeout=0.5)
+        Clock.schedule_once(partial(animate, self.yes, self.restart, self.no, self.circle, self.square, self.triangle), timeout=1.3)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -149,11 +152,12 @@ class GuidelinesWindow(Screen):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'temperature', 'guide', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
-        self.cont.opacity = 0  
-        self.restart.opacity = 0 
-        self.circle.opacity = 0 
-        self.square.opacity = 0 
-        Clock.schedule_once(self.animate, 1)
+        disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4, self.string_5, self.string_6, 
+                        self.string_7, self.string_8, self.string_9, self.string_10, self.string_11,
+                        self.cont, self.restart, self.circle, self.square)
+        Clock.schedule_once(partial(animate, self.string_1, self.string_2, self.string_3, self.string_4, self.string_5, self.string_6,
+                                    self.string_7, self.string_8, self.string_9, self.string_10, self.string_11), timeout=0.5)
+        Clock.schedule_once(partial(animate, self.cont, self.restart, self.circle, self.square), timeout=1.3)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -161,25 +165,15 @@ class GuidelinesWindow(Screen):
         self.event.cancel()
         self.timeout.cancel()
         self.errors.cancel()
-        
-    def animate(self, dt):    
-        anim = Animation(opacity=1, duration=0.5)
-        anim.start(self.cont)
-        anim.start(self.restart)
-        anim.start(self.circle)
-        anim.start(self.square)
 
 # Window to measure persons temperature
 class TemperatureWindow(Screen):
-    string_1 = StringProperty("Move closer!")  # Create a string object that could be updated and displayed on the Kivy screen
-    string_2 = StringProperty("Please get within 7")
-    string_3 = StringProperty("centimeters from the")
-    string_4 = StringProperty("end of the device")
-    
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(self.measure_temp, 1/30)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
+        disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4, self.string_5, self.string_6, self.string_7)
+        Clock.schedule_once(partial(animate, self.string_1, self.string_2, self.string_3, self.string_4), timeout=1)
         
     def on_pre_leave(self):
         global PROGRESS_COUNTER
@@ -232,10 +226,8 @@ class TemperatureWindow(Screen):
         distance = ReadDistance(17)    
         # If distance read from the sensor is less than 10 centimeters
         if distance < 10 and SAMPLE_COUNTER < 30:
-            self.string_1 = "Please stay still!"
-            self.string_2 = "Measuring your"
-            self.string_3 = "temperature"
-            self.string_4 = ""
+            disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4)
+            enable_opacity(self.string_5, self.string_6, self.string_7)
             SAMPLE_COUNTER += 1
             PROGRESS_COUNTER += 0.8333  # Increment by 3.33 because progress bar is up to 100 and we execute this for 1 second
             self.ids.progress.value = PROGRESS_COUNTER  # Update the progress bar
@@ -257,10 +249,8 @@ class TemperatureWindow(Screen):
                             self.manager.current = "fail"                                                                 # If temperature is above 38 degrees, go to fail screen
         # If distance is less than 10 centimeters -> reset variables and progress bar, and start measuring again
         else:
-            self.string_1 = "Move closer!"
-            self.string_2 = "Please get within 7"
-            self.string_3 = "centimeters from the"
-            self.string_4 = "end of the device"
+            disable_opacity(self.string_5, self.string_6, self.string_7)
+            enable_opacity(self.string_1, self.string_2, self.string_3, self.string_4)
             SAMPLE_COUNTER = 0
             TEMPERATURE = 0
             PROGRESS_COUNTER = 0
@@ -276,7 +266,9 @@ class GoodTempWindow(Screen):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'begin', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 10, 0), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
-        self.temperature_display = str(round(TEMPERATURE / SAMPLE_COUNTER, 1))  # Varibale for displaying the temperature on the screen
+        self.temperature_display = str(round(TEMPERATURE / SAMPLE_COUNTER, 1))  # Variable for displaying the temperature on the screen
+        disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4)
+        Clock.schedule_once(partial(animate, self.string_1, self.string_2, self.string_3, self.string_4), timeout=0.5)
         TEMPERATURE = 0
         SAMPLE_COUNTER = 0
         
@@ -295,7 +287,7 @@ class GoodTempWindow(Screen):
         d.text((20,50), str(dt_string), fill=(0,0,0), font=mono_14)
         d.text((150,88), "SetTek", fill=(0,0,0), font=mono_14) 
         img.save('pil_text.png')                                                                    # Save the image file
-        os.system("brother_ql -b pyusb -m QL-700 -p usb://0x04f9:0x2042 print -l 62 pil_text.png")  # Send a console print command
+        #os.system("brother_ql -b pyusb -m QL-700 -p usb://0x04f9:0x2042 print -l 62 pil_text.png")  # Send a console print command
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -324,6 +316,8 @@ class FailWindow(Screen):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'begin', 'fail', 'begin'), 1/20)
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 10, 0), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
+        disable_opacity(self.string_1, self.string_2, self.string_3)
+        Clock.schedule_once(partial(animate, self.string_1, self.string_2, self.string_3), timeout=0.5)
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -338,6 +332,8 @@ class ErrorWindow(Screen):
     
     def on_pre_enter(self):
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
+        disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4)
+        Clock.schedule_once(partial(animate, self.string_1, self.string_2, self.string_3, self.string_4), timeout=0.5)
         
     def on_pre_leave(self):
         self.errors.cancel()
@@ -406,22 +402,19 @@ def answer_input(instance, right, left, middle, dt):
             instance.timeout()
 
 
-def disable_opacity(self):
-    self.yes.opacity = 0  
-    self.restart.opacity = 0 
-    self.no.opacity = 0 
-    self.circle.opacity = 0 
-    self.square.opacity = 0 
-    self.triangle.opacity = 0 
+def disable_opacity(*argv):
+    for arg in argv:
+        arg.opacity = 0
+        
+def enable_opacity(*argv):
+    for arg in argv:
+        arg.opacity = 1
 
-def animate(self, dt):     
+def animate(*argv):   
     anim = Animation(opacity=1, duration=0.5)
-    anim.start(self.yes)
-    anim.start(self.restart)
-    anim.start(self.no)
-    anim.start(self.circle)
-    anim.start(self.square)
-    anim.start(self.triangle)
+    for arg in argv:
+        if not isinstance(arg, float):
+            anim.start(arg)
                 
 
 # Function to check for timeout on each screen        
@@ -454,8 +447,9 @@ def timeout_check(instance, timeout_val, activate_pop, dt):
 # Function for creating a pop up window
 def timeout_pop(instance):
     instance.show = Popups()    
-    instance.pop = Popup(title='Warning', content=instance.show, size_hint=(None, None), size=(400, 250))
+    instance.pop = Popup(title='', content=instance.show, size_hint=(None, None), size=(400, 250))
     instance.pop.open()
+    instance.pop.background = 'CrewScan_background_blue.jpg'
     
 
 # Function for checking various errors such as: Temperature sensor, ADC, distance sensor, printer and pedals    
@@ -472,6 +466,10 @@ def check_errors(instance, dt):
     dist_sensor = 4  # If distance sensor is broken, raise bit 2
     printer = 8      # If printer is offline, raise bit 3
     pedals = 16      # If pedals are pressed for > 10 seconds, raise bit 4
+    
+    # Update the error code on the error screen    
+    if instance.manager.current == 'error':
+        instance.error_display = str('{0:05b}'.format(ERROR_CODE))
     
     # Try to create an adc object, if there is an exception raise the correct bit
     try:
@@ -580,7 +578,7 @@ Window.size = (480, 800)                                   # Set screen size to 
 kv = Builder.load_file("my.kv")                            # Load .kv file for GUI interface
 
 # Setup the screen manager
-sm = WindowManager(transition=NoTransition())
+sm = WindowManager(transition=FadeTransition(duration=0.25))
 screens = [BeginWindow(name="begin"), InfoWindow(name="info"), CoughWindow(name="cough"), TravelWindow(name="travel"),
            FeverWindow(name="fever"), ContactWindow(name="contact"), GuidelinesWindow(name="guide"),
            TemperatureWindow(name="temperature"), GoodTempWindow(name="good_temp"),

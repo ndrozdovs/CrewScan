@@ -1,5 +1,7 @@
 <BeginWindow>:
     name: "begin"
+    string_1: string_1
+    image_1: image_1
 
     canvas.before:
         Rectangle:
@@ -11,12 +13,14 @@
         cols:1
 
         Label:
+            id: string_1
             text: "Press        to Begin"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.65}
             font_size: 40
 
         Image:
+            id: image_1
             source: 'GreenCircle.png'
             size_hint: 0.15, 0.15
             pos_hint: {"x":0.38, "top":0.625}
@@ -28,6 +32,15 @@
     cancel: cancel
     circle: circle
     triangle: triangle
+    string_1: string_1
+    string_2: string_2
+    string_3: string_3
+    string_4: string_4
+    string_5: string_5
+    string_6: string_6
+    image_1: image_1
+    image_2: image_2
+    image_3: image_3
     
     canvas.before:
         Rectangle:
@@ -39,36 +52,42 @@
         cols:1
 
         Label:
+            id: string_1
             text: "Please answer"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.98}
             font_size: 40
 
         Label:
+            id: string_2
             text: "the following"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.92}
             font_size: 40
 
         Label:
+            id: string_3
             text: "using      for yes,"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.86}
             font_size: 40
             
         Label:
+            id: string_4
             text: "and      for no"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.8}
             font_size: 40
             
         Label:
+            id: string_5
             text: "Press      at any"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.68}
             font_size: 40
             
         Label:
+            id: string_6
             text: "moment to restart"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.62}
@@ -89,18 +108,21 @@
             font_size: 40
 
         Image:
+            id: image_1
             source: 'GreenCircle.png'
             size: self.texture_size
             size_hint: 0.11, 0.11
             pos_hint: {"x":0.412, "top":0.8115}
 
         Image:
+            id: image_2
             source: 'RedTriangle.png'
             size: self.texture_size
             size_hint: 0.09, 0.09
             pos_hint: {"x":0.412, "top":0.745}
       
         Image:
+            id: image_3
             source: 'YellowSquare.png'
             size: self.texture_size
             size_hint: 0.085, 0.085
@@ -129,6 +151,13 @@
     circle: circle
     square: square
     triangle: triangle
+    string_1: string_1
+    string_2: string_2
+    string_3: string_3
+    string_4: string_4
+    string_5: string_5
+    string_6: string_6
+    string_7: string_7
 
     canvas.before:
         Rectangle:
@@ -140,42 +169,49 @@
         cols:1
 
         Label:
+            id: string_1
             text: "Do you have any of the"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.98}
             font_size: 40
 
         Label:
+            id: string_2
             text: "following symptoms?"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.92}
             font_size: 40
 
         Label:
+            id: string_3
             text: "- Severe difficulty breathing"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.089, "top":0.8}
             font_size: 32
 
         Label:
+            id: string_4
             text: "- Severe chest pain"
             size_hint: 0.8, 0.2
             pos_hint: {"x":-0.036, "top":0.74}
             font_size: 32
             
         Label:
+            id: string_5
             text: "- Very hard time waking up"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.074, "top":0.68}
             font_size: 32
             
         Label:
+            id: string_6
             text: "- Feeling confused"
             size_hint: 0.8, 0.2
             pos_hint: {"x":-0.045, "top":0.62}
             font_size: 32
             
         Label:
+            id: string_7
             text: "- Losing consciousness"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.033, "top":0.56}
@@ -232,6 +268,10 @@
     circle: circle
     square: square
     triangle: triangle
+    string_1: string_1
+    string_2: string_2
+    string_3: string_3
+    string_4: string_4
 
     canvas.before:
         Rectangle:
@@ -243,24 +283,28 @@
         cols:1
 
         Label:
+            id: string_1 
             text: "Are you experiencing"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.98}
             font_size: 40
             
         Label:
+            id: string_2
             text: "cold, flu, or COVID-19"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.92}
             font_size: 40
             
         Label:
+            id: string_3
             text: "like symptoms, even"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.86}
             font_size: 40
             
         Label:
+            id: string_4
             text: "mild ones?"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.80}
@@ -317,6 +361,10 @@
     circle: circle
     square: square
     triangle: triangle
+    string_1: string_1
+    string_2: string_2
+    string_3: string_3
+    string_4: string_4
 
     canvas.before:
         Rectangle:
@@ -328,24 +376,28 @@
         cols:1
 
         Label:
+            id: string_1
             text: "Have you travelled"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.98}
             font_size: 40
             
         Label:
+            id: string_2
             text: "to any countries"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.92}
             font_size: 40
 
         Label:
+            id: string_3
             text: "outside Canada within"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.86}
             font_size: 40
             
         Label:
+            id: string_4
             text: "the last 14 days?"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.8}
@@ -402,6 +454,10 @@
     circle: circle
     square: square
     triangle: triangle
+    string_1: string_1
+    string_2: string_2
+    string_3: string_3
+    string_4: string_4
 
     canvas.before:
         Rectangle:
@@ -413,24 +469,28 @@
         cols:1
 
         Label:
+            id: string_1
             text: "Did you provide care"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.98}
             font_size: 40
 
         Label:
+            id: string_2
             text: "or have close contact"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.92}
             font_size: 40
 
         Label:
+            id: string_3
             text: "with a person with"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.86}
             font_size: 40
 
         Label:
+            id: string_4
             text: "confirmed COVID-19?"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.8}
@@ -485,6 +545,17 @@
     restart: restart
     circle: circle
     square: square
+    string_1: string_1
+    string_2: string_2
+    string_3: string_3
+    string_4: string_4
+    string_5: string_5
+    string_6: string_6
+    string_7: string_7
+    string_8: string_8
+    string_9: string_9
+    string_10: string_10
+    string_11: string_11
 
     canvas.before:
         Rectangle:
@@ -496,66 +567,77 @@
         cols:1
 
         Label:
+            id: string_1
             text: "On the next screen..."
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.98}
             font_size: 40
 
         Label:
+            id: string_2
             text: "1. Ensure forehead is clear"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.07, "top":0.88}
             font_size: 32
             
         Label:
+            id: string_3
             text: "   of hair or any other"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.004, "top":0.82}
             font_size: 32
             
         Label:
+            id: string_4
             text: "   obstructions"
             size_hint: 0.8, 0.2
             pos_hint: {"x":-0.088, "top":0.76}
             font_size: 32
 
         Label:
+            id: string_5
             text: "2. Align forehead with the"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.055, "top":0.70}
             font_size: 32
             
         Label:
+            id: string_6
             text: "   square sensor above,"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.037, "top":0.64}
             font_size: 32
             
         Label:
+            id: string_7
             text: "   using the eye markings"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.064, "top":0.58}
             font_size: 32
             
         Label:
+            id: string_8
             text: "   as a rough guide"
             size_hint: 0.8, 0.2
             pos_hint: {"x":-0.0335, "top":0.52}
             font_size: 32
             
         Label:
+            id: string_9
             text: "3. Remain still until"
             size_hint: 0.8, 0.2
             pos_hint: {"x":-0.043, "top":0.46}
             font_size: 32
             
         Label:
+            id: string_10
             text: "   temperature"
             size_hint: 0.8, 0.2
             pos_hint: {"x":-0.097, "top":0.40}
             font_size: 32
             
         Label:
+            id: string_11
             text: "    measurement is done"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.035, "top":0.34}
@@ -592,6 +674,13 @@
             
 <TemperatureWindow>:
     name: "temperature"
+    string_1: string_1
+    string_2: string_2
+    string_3: string_3
+    string_4: string_4
+    string_5: string_5
+    string_6: string_6
+    string_7: string_7
 
     canvas.before:
         Rectangle:
@@ -603,27 +692,52 @@
         cols:1
 
         Label:
-            text: root.string_1
+            id: string_1
+            text: "Move closer!"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.98}
             font_size: 40
 
         Label:
-            text: root.string_2
+            id: string_2
+            text: "Please get within 7"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.92}
             font_size: 40
             
         Label:
-            text: root.string_3
+            id: string_3
+            text: "centimeters from the"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.86}
             font_size: 40
             
         Label:
-            text: root.string_4
+            id: string_4
+            text: "end of the device"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.8}
+            font_size: 40
+            
+        Label:
+            id: string_5
+            text: "Please stay still!"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.1, "top":0.98}
+            font_size: 40
+            
+        Label:
+            id: string_6
+            text: "Measuring your"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.1, "top":0.92}
+            font_size: 40
+            
+        Label:
+            id: string_7
+            text: "temperature"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.1, "top":0.86}
             font_size: 40
             
         ProgressBar:
@@ -648,6 +762,10 @@
 
 <GoodTempWindow>:
     name: "good_temp"
+    string_1: string_1
+    string_2: string_2
+    string_3: string_3
+    string_4: string_4
 
     canvas.before:
         Rectangle:
@@ -659,24 +777,28 @@
         cols:1
 
         Label:
+            id: string_1
             text: "Temperature is good"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.8}
             font_size: 40
             
         Label:
+            id: string_2
             text: root.temperature_display
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.74}
             font_size: 40
             
         Label:
+            id: string_3
             text: "Please collect visitor"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.62}
             font_size: 40
             
         Label:
+            id: string_4
             text: "pass from printer"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.56}
@@ -704,6 +826,9 @@
 
 <FailWindow>:
     name: "fail"
+    string_1: string_1
+    string_2: string_2
+    string_3: string_3
 
     canvas.before:
         Rectangle:
@@ -715,18 +840,21 @@
         cols:1
 
         Label:
+            id: string_1
             text: "Site access denied:"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.98}
             font_size: 40
             
         Label:
+            id: string_2
             text: "Secondary screening is"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.92}
             font_size: 40
             
         Label:
+            id: string_3
             text: "recommended"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.86}
@@ -734,7 +862,11 @@
             
 
 <ErrorWindow>:
-    name: "printer"
+    name: "error"
+    string_1: string_1
+    string_2: string_2
+    string_3: string_3
+    string_4: string_4
 
     canvas.before:
         Rectangle:
@@ -746,31 +878,35 @@
         cols:1
 
         Label:
+            id: string_1
             text: "I/O Error:"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0, "top":0.98}
             font_size: 40
             
         Label:
+            id: string_2
             text: root.error_display
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.295, "top":0.98}
             font_size: 40
             
         Label:
+            id: string_3
             text: "Please contact the"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.92}
             font_size: 40
             
         Label:
+            id: string_4
             text: "manufacturer"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.86}
             font_size: 40
 
             
-<Popups>:
+<Popups>:            
     Label: 
         text: "Are you still there?"
         size_hint: 0.8, 0.2
@@ -804,13 +940,13 @@
         canvas:
             BorderImage:
                 border: (11, 11, 11, 11)
-                pos: 83, 275
+                pos: 83, 280
                 size: 310, 105
                 source: 'grey.png'
                     
             BorderImage:
                 border: [int(min(self.width * (self.value / float(self.max)) if self.max else 0, 11))] * 4
-                pos: 83, 322
+                pos: 83, 327
                 size: 310 * (self.value / float(self.max)) if self.max else 0, 11
                 source: 'green.png'
 
