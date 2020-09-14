@@ -59,7 +59,7 @@ class BeginWindow(Screen):
 class InfoWindow(Screen):
     def on_pre_enter(self):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'cough', 'begin', 'begin'), 1/20)
-        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 5, 1), 1)
+        self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
         disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4, self.string_5, self.string_6,
                         self.image_1, self.image_2, self.image_3,
@@ -173,7 +173,7 @@ class TemperatureWindow(Screen):
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 50, 1), 1)
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)
         disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4, self.string_5, self.string_6, self.string_7)
-        Clock.schedule_once(partial(animate, self.string_1, self.string_2, self.string_3, self.string_4), timeout=1)
+        Clock.schedule_once(partial(animate, self.string_1, self.string_2, self.string_3, self.string_4), timeout=0.5)
         
     def on_pre_leave(self):
         global PROGRESS_COUNTER
@@ -225,7 +225,7 @@ class TemperatureWindow(Screen):
         
         distance = ReadDistance(17)    
         # If distance read from the sensor is less than 10 centimeters
-        if distance < 10 and SAMPLE_COUNTER < 30:
+        if distance < 10 and SAMPLE_COUNTER < 30 and TIMEOUT_COUNTER > 0:
             disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4)
             enable_opacity(self.string_5, self.string_6, self.string_7)
             SAMPLE_COUNTER += 1
@@ -248,7 +248,7 @@ class TemperatureWindow(Screen):
                         else:
                             self.manager.current = "fail"                                                                 # If temperature is above 38 degrees, go to fail screen
         # If distance is less than 10 centimeters -> reset variables and progress bar, and start measuring again
-        else:
+        elif TIMEOUT_COUNTER > 0:
             disable_opacity(self.string_5, self.string_6, self.string_7)
             enable_opacity(self.string_1, self.string_2, self.string_3, self.string_4)
             SAMPLE_COUNTER = 0
@@ -273,6 +273,7 @@ class GoodTempWindow(Screen):
         SAMPLE_COUNTER = 0
         
     def on_enter(self):
+        global TIMEOUT_COUNTER
         # Create a png image file with todays date and time and then print it 
         fontPath = "/usr/share/fonts/truetype/freefont/FreeMono.ttf"                                # Choose the font
         mono_14 = ImageFont.truetype(fontPath, 14)                                                  # Size 14 font
@@ -286,8 +287,9 @@ class GoodTempWindow(Screen):
         d.text((5,30), "Access to Site Granted:", fill=(0,0,0), font=mono_14)
         d.text((20,50), str(dt_string), fill=(0,0,0), font=mono_14)
         d.text((150,88), "SetTek", fill=(0,0,0), font=mono_14) 
-        img.save('pil_text.png')                                                                    # Save the image file
-        #os.system("brother_ql -b pyusb -m QL-700 -p usb://0x04f9:0x2042 print -l 62 pil_text.png")  # Send a console print command
+        img.save('pil_text.png')   
+        if TIMEOUT_COUNTER > 0:                                                                          # Save the image file
+            os.system("brother_ql -b pyusb -m QL-700 -p usb://0x04f9:0x2042 print -l 62 pil_text.png")  # Send a console print command
         
     def on_pre_leave(self):
         global TIMEOUT_COUNTER
@@ -328,6 +330,7 @@ class FailWindow(Screen):
 
 # Window if an error was detected        
 class ErrorWindow(Screen):
+    global ERROR_CODE
     error_display = StringProperty(str('{0:05b}'.format(ERROR_CODE)))  # Create a string object that could be updated and displayed on the Kivy screen
     
     def on_pre_enter(self):
@@ -449,7 +452,7 @@ def timeout_pop(instance):
     instance.show = Popups()    
     instance.pop = Popup(title='', separator_height=0, content=instance.show, size_hint=(None, None), size=(400, 250))
     instance.pop.open()
-    instance.pop.background = 'CrewScan_background_blue.jpg'
+    instance.pop.background = 'Popup_background.png'
     
 
 # Function for checking various errors such as: Temperature sensor, ADC, distance sensor, printer and pedals    
@@ -593,5 +596,5 @@ class MyApp(App):
 
 
 if __name__ == "__main__":
-    #Window.fullscreen = 'auto'  
+    Window.fullscreen = 'auto'  
     MyApp().run()

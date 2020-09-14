@@ -7,7 +7,7 @@
         Rectangle:
             pos: self.pos
             size: self.size
-            source: 'CrewScan_background_blue.jpg'
+            source: 'CrewScan_background_blue.png'
 
     FloatLayout:
         cols:1
@@ -910,43 +910,43 @@
     Label: 
         text: "Are you still there?"
         size_hint: 0.8, 0.2
-        pos_hint: {"x":0.105, "top":0.9}
+        pos_hint: {"x":0.105, "top":0.98}
         font_size: 18
         
     Label: 
         text: "Press         to dismiss this window"
         size_hint: 0.8, 0.2
-        pos_hint: {"x":0.105, "top":0.7}
+        pos_hint: {"x":0.105, "top":0.78}
         font_size: 18
         
     Label: 
         text: "Otherwise, restarting in 10 seconds"
         size_hint: 0.8, 0.2
-        pos_hint: {"x":0.105, "top":0.55}
+        pos_hint: {"x":0.105, "top":0.63}
         font_size: 18
         
     Image:
         source: 'GreenCircle.png'
         size: self.texture_size
         size_hint: 0.15, 0.15
-        pos_hint: {"x":0.25, "top":0.675}
+        pos_hint: {"x":0.25, "top":0.755}
         
     ProgressBar:
         id: progress
         max: 100
         size_hint: (0.8, 0.2)
-        pos_hint: {"x":0.10, "top":0.32}
+        pos_hint: {"x":0.10, "top":0.40}
             
         canvas:
             BorderImage:
                 border: (11, 11, 11, 11)
-                pos: 83, 280
+                pos: 83, 300
                 size: 310, 105
                 source: 'grey.png'
                     
             BorderImage:
                 border: [int(min(self.width * (self.value / float(self.max)) if self.max else 0, 11))] * 4
-                pos: 83, 327
+                pos: 83, 347
                 size: 310 * (self.value / float(self.max)) if self.max else 0, 11
                 source: 'green.png'
 
