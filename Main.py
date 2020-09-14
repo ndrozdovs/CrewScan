@@ -447,7 +447,7 @@ def timeout_check(instance, timeout_val, activate_pop, dt):
 # Function for creating a pop up window
 def timeout_pop(instance):
     instance.show = Popups()    
-    instance.pop = Popup(title='', content=instance.show, size_hint=(None, None), size=(400, 250))
+    instance.pop = Popup(title='', separator_height=0, content=instance.show, size_hint=(None, None), size=(400, 250))
     instance.pop.open()
     instance.pop.background = 'CrewScan_background_blue.jpg'
     
