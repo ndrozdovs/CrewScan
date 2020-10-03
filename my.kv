@@ -1,19 +1,27 @@
 <BeginWindow>:
     name: "begin"
     string_1: string_1
+    string_2: string_2
     image_1: image_1
 
     canvas.before:
         Rectangle:
             pos: self.pos
             size: self.size
-            source: 'CrewScan_background_blue.png'
+            source: 'CrewScan_background_blue.jpg'
 
     FloatLayout:
         cols:1
 
         Label:
             id: string_1
+            text: "Hi!"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.1, "top":0.78}
+            font_size: 40
+        
+        Label:
+            id: string_2
             text: "Press        to Begin"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.1, "top":0.65}
@@ -681,6 +689,7 @@
     string_5: string_5
     string_6: string_6
     string_7: string_7
+    string_8: string_8
 
     canvas.before:
         Rectangle:
@@ -740,6 +749,13 @@
             pos_hint: {"x":0.1, "top":0.86}
             font_size: 40
             
+        Label:
+            id: string_8
+            text: "Too close!"
+            size_hint: 0.8, 0.2
+            pos_hint: {"x":0.1, "top":0.98}
+            font_size: 40
+            
         ProgressBar:
             id: progress
             max: 100
@@ -792,14 +808,14 @@
             
         Label:
             id: string_3
-            text: "Please collect visitor"
+            text: "Please retrieve pass"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.62}
             font_size: 40
             
         Label:
             id: string_4
-            text: "pass from printer"
+            text: "from printer below"
             size_hint: 0.8, 0.2
             pos_hint: {"x":0.105, "top":0.56}
             font_size: 40

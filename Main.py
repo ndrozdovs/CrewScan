@@ -44,8 +44,9 @@ class BeginWindow(Screen):
         self.event = Clock.schedule_interval(partial(answer_input, self, 'info', 'begin', 'begin'), 1/20)  # Create event for pedal input, 20 times per second
         self.timeout = Clock.schedule_interval(partial(timeout_check, self, 0, 0), 1)                      # Create event for checking screen timeout, 1 time per second
         self.errors = Clock.schedule_interval(partial(check_errors, self), 1)                              # Create event for checking for errors, 1 time per second
-        disable_opacity(self.string_1, self.image_1)
-        Clock.schedule_once(partial(animate, self.string_1,self.image_1), timeout=0.5)
+        self.welcome = Clock.schedule_interval(partial(welcome, self, self.string_1), 1)
+        disable_opacity(self.string_1, self.string_2, self.image_1)
+        Clock.schedule_once(partial(animate, self.string_2,self.image_1), timeout=0.5)
 
     # Execute before leaving the screen    
     def on_pre_leave(self):
@@ -54,6 +55,7 @@ class BeginWindow(Screen):
         self.event.cancel()    # Cancel event for pedal input
         self.timeout.cancel()  # Cancel event for pedal input
         self.errors.cancel()   # Cancel event for pedal input
+        self.welcome.cancel()
  
 # Window to show how to answer to the prompts
 class InfoWindow(Screen):
@@ -224,9 +226,13 @@ class TemperatureWindow(Screen):
             self.manager.current = 'begin'
         
         distance = ReadDistance(17)    
+        
+        if distance < 4:
+            disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4, self.string_5, self.string_6, self.string_7)
+            enable_opacity(self.string_8)
         # If distance read from the sensor is less than 10 centimeters
-        if distance < 10 and SAMPLE_COUNTER < 30 and TIMEOUT_COUNTER > 0:
-            disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4)
+        elif distance < 10 and SAMPLE_COUNTER < 30 and TIMEOUT_COUNTER > 0:
+            disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4, self.string_8)
             enable_opacity(self.string_5, self.string_6, self.string_7)
             SAMPLE_COUNTER += 1
             PROGRESS_COUNTER += 0.8333  # Increment by 3.33 because progress bar is up to 100 and we execute this for 1 second
@@ -249,7 +255,7 @@ class TemperatureWindow(Screen):
                             self.manager.current = "fail"                                                                 # If temperature is above 38 degrees, go to fail screen
         # If distance is less than 10 centimeters -> reset variables and progress bar, and start measuring again
         elif TIMEOUT_COUNTER > 0:
-            disable_opacity(self.string_5, self.string_6, self.string_7)
+            disable_opacity(self.string_5, self.string_6, self.string_7, self.string_8)
             enable_opacity(self.string_1, self.string_2, self.string_3, self.string_4)
             SAMPLE_COUNTER = 0
             TEMPERATURE = 0
@@ -269,11 +275,18 @@ class GoodTempWindow(Screen):
         self.temperature_display = str(round(TEMPERATURE / SAMPLE_COUNTER, 1))  # Variable for displaying the temperature on the screen
         disable_opacity(self.string_1, self.string_2, self.string_3, self.string_4)
         Clock.schedule_once(partial(animate, self.string_1, self.string_2, self.string_3, self.string_4), timeout=0.5)
+        Clock.schedule_once(self.print_label, timeout=1)
         TEMPERATURE = 0
         SAMPLE_COUNTER = 0
         
-    def on_enter(self):
+    def on_pre_leave(self):
         global TIMEOUT_COUNTER
+        TIMEOUT_COUNTER = 0
+        self.event.cancel()
+        self.timeout.cancel()
+        self.errors.cancel()
+        
+    def print_label(self, dt):
         # Create a png image file with todays date and time and then print it 
         fontPath = "/usr/share/fonts/truetype/freefont/FreeMono.ttf"                                # Choose the font
         mono_14 = ImageFont.truetype(fontPath, 14)                                                  # Size 14 font
@@ -287,16 +300,8 @@ class GoodTempWindow(Screen):
         d.text((5,30), "Access to Site Granted:", fill=(0,0,0), font=mono_14)
         d.text((20,50), str(dt_string), fill=(0,0,0), font=mono_14)
         d.text((150,88), "SetTek", fill=(0,0,0), font=mono_14) 
-        img.save('pil_text.png')   
-        if TIMEOUT_COUNTER > 0:                                                                          # Save the image file
-            os.system("brother_ql -b pyusb -m QL-700 -p usb://0x04f9:0x2042 print -l 62 pil_text.png")  # Send a console print command
-        
-    def on_pre_leave(self):
-        global TIMEOUT_COUNTER
-        TIMEOUT_COUNTER = 0
-        self.event.cancel()
-        self.timeout.cancel()
-        self.errors.cancel()
+        img.save('pil_text.png')                                                                    # Save the image file
+        #os.system("brother_ql -b pyusb -m QL-700 -p usb://0x04f9:0x2042 print -l 62 pil_text.png")  # Send a console print command
 
 # Not currently used    
 class BadTempWindow(Screen):
@@ -348,6 +353,13 @@ class WindowManager(ScreenManager):
 # Used for adding text and progress bar for the pop up window in .kv file  
 class Popups(FloatLayout): 
     pass
+    
+    
+def welcome(instance, string, dt):
+    if ReadDistance(17) < 60:
+        Animation(opacity=1, duration=0.5).start(string)
+    else: 
+        Animation(opacity=0, duration=0.5).start(string)
 
 
 # A function for checking if any of the pedals have been pressed
@@ -408,13 +420,22 @@ def answer_input(instance, right, left, middle, dt):
 def disable_opacity(*argv):
     for arg in argv:
         arg.opacity = 0
+       
         
 def enable_opacity(*argv):
     for arg in argv:
         arg.opacity = 1
 
+
 def animate(*argv):   
     anim = Animation(opacity=1, duration=0.5)
+    for arg in argv:
+        if not isinstance(arg, float):
+            anim.start(arg)
+            
+
+def fade_out(*argv):   
+    anim = Animation(opacity=0, duration=0.5)
     for arg in argv:
         if not isinstance(arg, float):
             anim.start(arg)
@@ -563,6 +584,10 @@ def ReadDistance(pin):
         return distance
     except:
         return 0
+        
+        
+print("----------Starting a new log:", datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+print("----------------------------------------------------------------------")
 
 try:
     i2c = busio.I2C(board.SCL, board.SDA)
@@ -596,5 +621,5 @@ class MyApp(App):
 
 
 if __name__ == "__main__":
-    Window.fullscreen = 'auto'  
+    #Window.fullscreen = 'auto'  
     MyApp().run()
